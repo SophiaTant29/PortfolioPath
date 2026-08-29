@@ -7,7 +7,7 @@ export default async function SummaryPage({params}:{params:Promise<{id:string}>}
   const {data:portfolio}=await supabase.from("portfolios").select("*").eq("id",id).single();
   const {data:rows}=await supabase.from("portfolio_selections").select("*").eq("portfolio_id",id).order("category");
 
-  if(!portfolio)return <section className="panel">Portfolio not found.</section>;
+  if(!portfolio)return <section className="panel">Portfolio not found.<div className="actions" style={{"marginTop":16}}><Link className="btn btnPrimary" href={`/portfolios/${params.id}/final-review`}>Review My Portfolio</Link></div></section>;
   const target=Number(portfolio.risk_profile?.answers?.amount??0);
   const total=(rows??[]).reduce((s:any,x:any)=>s+Number(x.planned_amount),0);
   const pct=target>0?total/target*100:0;

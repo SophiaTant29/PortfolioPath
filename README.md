@@ -274,3 +274,41 @@ The frontend defaults to http://localhost:3000 and backend to http://127.0.0.1:8
 - GitHub repository setup guide
 - GitHub publication status report
 - Explicit protection against accidentally publishing into unrelated repositories
+
+## Production v21 added
+- Category-by-category mini research libraries
+- Highest-weighted allocation category always appears first
+- Top-ranked starting set with optional browse-all behavior
+- Full existing 300+ security universe remains searchable
+- Per-category educational guidance
+- Explicit “Why it appears” explanation for every candidate
+- Guided research pages that explain why each resource exists and what to look for
+- Up-to-three security comparison table
+- Stock/ETF-specific research paths
+- Research checkpoint before portfolio selection
+
+## Production v22 added
+- Plain-English comparison tradeoffs
+- “What actually matters here?” comparison prompts
+- Persistent research/learning checkpoints
+- Allocation-weight explanations
+- Category completion review gates
+- Final portfolio construction review
+- Beginner investment glossary
+- Reusable in-app term help component
+- Alpha beginner usability feedback worksheet
+
+## Production v23 added
+- Planned-investment setup before portfolio construction
+- Percentage-only mode when the user does not know the dollar amount yet
+- Both percentage and dollar targets when an amount is known
+- Multiple holdings per allocation category
+- Suggested number of holdings per category based on portfolio size and category weight
+- Equal-weight educational examples for splitting category allocations
+- Explicit separation of category allocation vs. individual position sizing
+
+## Production v24 added
+- Inline research-resource panel on every stock/ETF card
+- Explicit explanation of why each research source matters
+- Beginner-friendly checklist of what to look for at each source
+- Different resource guidance for stocks and ETFs

@@ -84,3 +84,67 @@ th{font-size:.82rem;color:var(--muted)}
   .panel{padding:17px}
   .pageHeader{display:block}
 }
+
+
+/* v21 Guided Research Library */
+.progress{
+  height:10px;
+  background:#eef2f7;
+  border-radius:999px;
+  overflow:hidden;
+}
+.progress > span{
+  display:block;
+  height:100%;
+  background:var(--accent);
+  border-radius:inherit;
+}
+.comparisonTable{
+  width:100%;
+  border-collapse:collapse;
+  min-width:820px;
+}
+.comparisonTable th,
+.comparisonTable td{
+  text-align:left;
+  vertical-align:top;
+  padding:12px;
+  border-bottom:1px solid var(--line);
+}
+.comparisonTable th{
+  font-size:13px;
+  color:var(--muted);
+}
+
+
+/* v22 learning layer */
+.termHelp{position:relative;display:inline-block}
+.termHelpButton{
+  border:0;background:transparent;color:inherit;font:inherit;
+  text-decoration:underline;text-decoration-style:dotted;cursor:pointer;padding:0;
+}
+.termHelpButton span{
+  display:inline-grid;place-items:center;width:17px;height:17px;
+  border-radius:50%;background:#eef2f7;font-size:11px;text-decoration:none;
+}
+.termHelpPopover{
+  position:absolute;z-index:50;left:0;top:calc(100% + 8px);
+  width:min(320px,80vw);background:white;border:1px solid var(--line);
+  box-shadow:0 12px 30px rgba(15,23,42,.15);border-radius:10px;padding:12px;
+  font-size:14px;line-height:1.45;
+}
+textarea{
+  border:1px solid var(--line);border-radius:10px;padding:10px 12px;
+  background:var(--surface);color:inherit;font:inherit;
+}
+
+/* v24 inline research resources */
+.researchResourceWrap{margin-top:12px}
+.researchResourcePanel{margin-top:12px;padding:14px;border:1px solid var(--line);border-radius:12px;background:#fafcff}
+.researchIntro{padding:12px;border-radius:10px;background:#f3f7ff;margin-bottom:12px}
+.researchIntro p{margin-bottom:0}
+.researchResourceCard{border-top:1px solid var(--line);padding:14px 0}
+.researchResourceCard:first-of-type{border-top:0}
+.researchResourceHeader{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.researchResourceHeader h4{margin:0}
+.researchResourceCard p{line-height:1.5}
