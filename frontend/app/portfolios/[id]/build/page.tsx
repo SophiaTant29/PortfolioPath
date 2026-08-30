@@ -16,14 +16,14 @@ type Allocation={name:string;pct:number;dollars:number};
 type Selection={ticker:string;name:string;category:string;amount:number;type:string};
 
 function fitScore(s:any,rp:any){
-  const profile=rp?.profileName ?? "Balanced";
-  const weights:any={
+  const profile=String(rp?.profileName ?? "Balanced");
+  const weights=({
     "Protect":{quality:.30,stability:.30,growth:.05,dividend:.15,risk:.20},
     "Cautious":{quality:.28,stability:.25,growth:.08,dividend:.14,risk:.25},
     "Balanced":{quality:.25,stability:.18,growth:.20,dividend:.08,risk:.29},
     "Growth":{quality:.22,stability:.10,growth:.32,dividend:.04,risk:.32},
     "Aggressive Growth":{quality:.18,stability:.06,growth:.38,dividend:.03,risk:.35},
-  }[profile];
+  } as Record<string,{quality:number;stability:number;growth:number;dividend:number;risk:number}>)[profile] ?? {quality:.25,stability:.18,growth:.20,dividend:.08,risk:.29};
   const targetRisk=Number(rp?.overallRisk ?? 55);
   const riskFit=Math.max(0,100-Math.abs(Number(s.risk)-targetRisk)*1.6);
   const score=s.quality*weights.quality+s.stability*weights.stability+s.growth*weights.growth+s.dividend*weights.dividend+riskFit*weights.risk;
