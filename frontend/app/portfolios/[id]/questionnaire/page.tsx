@@ -76,7 +76,7 @@ export default function QuestionnairePage(){
     <form onSubmit={submit}>
       <section className="panel" style={{marginBottom:16}}>
         <p className="muted">Investor Profile</p>
-        <h1>Build your recommended portfolio</h1>
+        <h1>Build your educational model portfolio</h1>
         <p>These questions help PortfolioPath estimate how much investment risk fits your goals and financial flexibility.</p><p className="helpText">All 15 questions are required. You can edit your answers later.</p>
       </section>
 

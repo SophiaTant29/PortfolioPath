@@ -3,10 +3,10 @@ import Link from "next/link";
 export default function PortfolioProgress({id,portfolio,selections}:{id:string;portfolio:any;selections:any[]}){
   const steps=[
     {name:"Investor Profile",done:!!portfolio.risk_profile,href:`/portfolios/${id}/questionnaire`},
-    {name:"Recommended Allocation",done:!!portfolio.risk_profile,href:`/portfolios/${id}/recommendation`},
+    {name:"Model Allocation",done:!!portfolio.risk_profile,href:`/portfolios/${id}/recommendation`},
     {name:"Build Portfolio",done:(selections?.length??0)>0,href:`/portfolios/${id}/build?step=0`},
     {name:"Portfolio Review",done:(selections?.length??0)>0,href:`/portfolios/${id}/review`},
-    {name:"Insights",done:(selections?.length??0)>0,href:`/portfolios/${id}/insights`},
+    {name:"Structure Summary",done:(selections?.length??0)>0,href:`/portfolios/${id}/insights`},
   ];
 
   return <div className="card">

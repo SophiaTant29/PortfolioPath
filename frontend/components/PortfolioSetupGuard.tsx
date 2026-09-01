@@ -20,7 +20,7 @@ export default function PortfolioSetupGuard({
   if(requireProfile && !portfolio.risk_profile){
     return <section className="panel">
       <h1>Complete your investor profile first</h1>
-      <p className="muted">This section depends on the questionnaire and recommended allocation.</p>
+      <p className="muted">This section depends on the questionnaire and educational model allocation.</p>
       <Link className="btn btnPrimary" href={`/portfolios/${portfolioId}/questionnaire`}>Start Questionnaire</Link>
     </section>;
   }

@@ -302,19 +302,21 @@ class ETFOverlapRequest(BaseModel):
 @app.post("/api/etf/overlap")
 async def etf_overlap(req:ETFOverlapRequest):
     symbols=[s.upper() for s in dict.fromkeys(req.symbols) if s][:8]
-    try:
-        holdings_list=await asyncio.gather(*[market_data.etf_holdings(s) for s in symbols])
-        pairwise=[]
-        for i in range(len(symbols)):
-            for j in range(i+1,len(symbols)):
-                pairwise.append({
-                    "a":symbols[i],
-                    "b":symbols[j],
-                    **overlap_between(holdings_list[i],holdings_list[j])
-                })
-        return {"symbols":symbols,"pairwise":pairwise}
-    except Exception as e:
-        raise HTTPException(502,str(e))
+    if len(symbols)<2:
+        return {"symbols":symbols,"pairwise":[],"errors":{},"message":"At least two ETFs are required."}
+    results=await asyncio.gather(*[market_data.etf_holdings(s) for s in symbols],return_exceptions=True)
+    holdings_list=[]; errors={}
+    for symbol,result in zip(symbols,results):
+        if isinstance(result,Exception):
+            errors[symbol]=str(result); holdings_list.append([])
+        else:
+            holdings_list.append(result)
+    pairwise=[]
+    for i in range(len(symbols)):
+        for j in range(i+1,len(symbols)):
+            result=overlap_between(holdings_list[i],holdings_list[j])
+            pairwise.append({"a":symbols[i],"b":symbols[j],**result})
+    return {"symbols":symbols,"pairwise":pairwise,"errors":errors,"data_cadence":"monthly"}
 
 
 class HoldingPerformanceRequest(BaseModel):

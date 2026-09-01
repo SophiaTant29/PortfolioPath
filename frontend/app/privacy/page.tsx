@@ -4,7 +4,7 @@ export default function PrivacyPage(){
     <h1>Privacy Overview</h1>
     <p>
       PortfolioPath stores account and portfolio information so users can save their questionnaires, portfolios,
-      transactions, watchlists, journal entries, and analysis history.
+      questionnaire results, portfolio selections, research scores, and analysis history.
     </p>
     <h2>Account data</h2>
     <p>Authentication and account persistence are handled through Supabase for PortfolioPath.</p>

@@ -151,15 +151,28 @@ def build_etf_score(*,info,holdings,history,investor_profile,portfolio_category=
     }
 
 def overlap_between(holdings_a,holdings_b):
+    def normalize_rows(payload):
+        if isinstance(payload,list): return payload
+        if isinstance(payload,dict):
+            for key in ("holdings","data","portfolioHoldings","results"):
+                value=payload.get(key)
+                if isinstance(value,list): return value
+            # Some providers return ticker-keyed holding objects.
+            vals=[v for v in payload.values() if isinstance(v,dict)]
+            if vals: return vals
+        return []
+
     def map_holdings(rows):
         out={}
-        for h in rows or []:
-            ticker=(h.get("asset") or h.get("symbol") or h.get("ticker") or "").upper()
+        for h in normalize_rows(rows):
+            if not isinstance(h,dict): continue
+            ticker=str(h.get("asset") or h.get("symbol") or h.get("ticker") or h.get("name") or "").upper().strip()
             if not ticker: continue
-            w=safe(h.get("weightPercentage",h.get("weight",h.get("percentage"))))
+            w=safe(h.get("weightPercentage",h.get("weight",h.get("percentage",h.get("portfolioWeight")))))
             if w is None: continue
             if w>1:w=w/100
-            out[ticker]=w
+            if w<0: continue
+            out[ticker]=max(out.get(ticker,0),w)
         return out
 
     a=map_holdings(holdings_a); b=map_holdings(holdings_b)
@@ -172,5 +185,8 @@ def overlap_between(holdings_a,holdings_b):
     return {
         "overlap_pct":round(overlap*100,2),
         "common_holdings":len(common),
-        "top_common":top
+        "top_common":top,
+        "holdings_a_count":len(a),
+        "holdings_b_count":len(b),
+        "warning":"One or both ETF holding datasets were empty." if not a or not b else None
     }

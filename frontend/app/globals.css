@@ -148,3 +148,10 @@ textarea{
 .researchResourceHeader{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
 .researchResourceHeader h4{margin:0}
 .researchResourceCard p{line-height:1.5}
+
+
+/* v28 beginner learning polish */
+.heroPanel{padding:clamp(24px,5vw,54px)}
+.educationalNotice{background:#f3f7ff;border:1px solid #dbe7ff;border-radius:12px;padding:12px 14px;color:#334155;max-width:none}
+.card h2{font-size:1.15rem}
+@media(max-width:760px){.heroPanel{padding:22px 17px}}

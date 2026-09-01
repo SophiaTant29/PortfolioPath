@@ -8,7 +8,7 @@ export default async function DashboardPage() {
   if(!user){
     return (
       <section className="panel">
-        <h1>Portfolio Lab</h1>
+        <h1>My Portfolios</h1>
         <p className="muted">Sign in to save portfolios across devices.</p>
         <Link className="btn btnPrimary" href="/login">Sign in</Link>
       </section>
@@ -23,7 +23,7 @@ export default async function DashboardPage() {
   return (
     <>
       <section className="panel">
-        <p className="muted">Portfolio Lab</p>
+        <p className="muted">Learning workspace</p>
         <h1>My Portfolios</h1>
         <p>Signed in as {user.email}</p>
         <div className="actions">

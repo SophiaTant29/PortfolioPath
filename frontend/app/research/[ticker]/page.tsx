@@ -30,7 +30,6 @@ export default async function ResearchPage({
     investorProfile=p?.risk_profile??null;
   }
   const profile=Array.isArray(data?.profile)?data.profile[0]:data?.profile;
-  const quote=Array.isArray(data?.quote)?data.quote[0]:data?.quote;
   const meta=securityUniverse.find(s=>s.ticker===symbol);
   const securityType=(meta?.type==="ETF"?"ETF":"Stock") as "ETF"|"Stock";
   const categoryName=category ?? meta?.category ?? "";
@@ -60,12 +59,11 @@ export default async function ResearchPage({
       <section className="panel" style={{marginTop:16}}>
         <h2>Quick facts</h2>
         <div className="grid">
-          <div className="card"><span className="muted">Current price</span><div className="kpi">{quote?.price ? `$${Number(quote.price).toFixed(2)}` : "—"}</div></div>
           <div className="card"><span className="muted">Type</span><div className="kpi" style={{fontSize:20}}>{securityType}</div></div>
           <div className="card"><span className="muted">Sector / category</span><div className="kpi" style={{fontSize:20}}>{profile?.sector ?? categoryName ?? "—"}</div></div>
-          <div className="card"><span className="muted">Market cap</span><div className="kpi" style={{fontSize:20}}>{quote?.marketCap ? `$${Number(quote.marketCap).toLocaleString()}` : "—"}</div></div>
+          <div className="card"><span className="muted">Industry</span><div className="kpi" style={{fontSize:20}}>{profile?.industry ?? "—"}</div></div>
         </div>
-        <p className="helpText" style={{marginTop:16}}>PortfolioPath refreshes in-app stock and fund information on a monthly cadence. The displayed snapshot may be up to 30 days old and is not real-time.</p>
+        <p className="helpText" style={{marginTop:16}}>PortfolioPath uses monthly research snapshots. The displayed information may be up to 30 days old and is intentionally not a live-price feed.</p>
       </section>
 
       <section className="panel" style={{marginTop:16}}>

@@ -15,7 +15,6 @@ required=[
     ROOT/"supabase/config.toml",
     ROOT/"supabase/migrations/20260825050000_initial_schema.sql",
     ROOT/"supabase/migrations/20260825050500_v17_integration_hardening.sql",
-    ROOT/"frontend/app/api/performance-snapshot/route.ts",
     ROOT/"DEPLOYMENT.md",
     ROOT/"ALPHA_CHECKLIST.md",
 ]

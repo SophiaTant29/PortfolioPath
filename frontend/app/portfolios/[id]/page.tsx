@@ -29,12 +29,12 @@ export default async function PortfolioPage({params}:{params:Promise<{id:string}
           : <p className="muted">Investor profile not completed.</p>}
         <div className="actions">
           <Link className="btn btnSecondary" href={`/portfolios/${id}/questionnaire`}>{portfolio.risk_profile?"Edit Investor Profile":"Start Questionnaire"}</Link>
-          {portfolio.risk_profile && <Link className="btn btnSecondary" href={`/portfolios/${id}/recommendation`}>View Recommendation</Link>}
+          {portfolio.risk_profile && <Link className="btn btnSecondary" href={`/portfolios/${id}/recommendation`}>View Model Allocation</Link>}
           {portfolio.risk_profile && <Link className="btn btnPrimary" href={`/portfolios/${id}/build?step=0`}>Build Portfolio</Link>}
           {portfolio.risk_profile && <Link className="btn btnSecondary" href={`/portfolios/${id}/review`}>Portfolio Review</Link>}
-          {portfolio.risk_profile && <Link className="btn btnSecondary" href={`/portfolios/${id}/insights`}>Insights</Link>}
-          {portfolio.risk_profile && <Link className="btn btnSecondary" href={`/portfolios/${id}/alerts`}>Alerts</Link>}
-          <Link className="btn btnSecondary" href={`/research/MSFT?portfolio=${id}`}>Research sample stock</Link>
+          {portfolio.risk_profile && <Link className="btn btnSecondary" href={`/portfolios/${id}/insights`}>Structure Summary</Link>}
+          {portfolio.risk_profile && <Link className="btn btnSecondary" href={`/portfolios/${id}/alerts`}>Educational Alerts</Link>}
+          <Link className="btn btnSecondary" href={`/research/MSFT?portfolio=${id}`}>Explore Sample Research</Link>
         </div>
       </section>
       <section style={{marginTop:16}}><PortfolioProgress id={id} portfolio={portfolio} selections={selections??[]}/></section>

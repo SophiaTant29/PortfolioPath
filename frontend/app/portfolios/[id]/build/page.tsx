@@ -45,7 +45,7 @@ export default function PortfolioBuilder(){
   const [message,setMessage]=useState("");
   const [expanded,setExpanded]=useState(false);
   const [showCompletion,setShowCompletion]=useState(false);
-  const [browseMode,setBrowseMode]=useState<"Best fit"|"Beginner-friendly ETFs"|"Lower risk first"|"Higher quality first"|"Growth-focused"|"Dividend-focused">("Best fit");
+  const [browseMode,setBrowseMode]=useState<"Best fit"|"Good for beginners"|"More diversified"|"Lower volatility"|"Higher quality"|"Growth focused"|"Dividend focused"|"ETFs only"|"Individual stocks">("Best fit");
   const [amountDrafts,setAmountDrafts]=useState<Record<string,string>>({});
 
   useEffect(()=>{(async()=>{
@@ -84,14 +84,18 @@ export default function PortfolioBuilder(){
       .filter(s=>typeFilter==="All"||s.type===typeFilter)
       .filter(s=>`${s.ticker} ${s.name}`.toLowerCase().includes(searchText.toLowerCase()))
       .map(s=>({...s,match:fitScore(s,portfolio?.risk_profile)}));
-    if(browseMode==="Beginner-friendly ETFs")rows=rows.filter(s=>s.type==="ETF");
+    if(browseMode==="Good for beginners"||browseMode==="More diversified"||browseMode==="ETFs only")rows=rows.filter(s=>s.type==="ETF");
+    if(browseMode==="Individual stocks")rows=rows.filter(s=>s.type==="Stock");
     const sorters:Record<string,(a:any,b:any)=>number>={
       "Best fit":(a,b)=>b.match-a.match,
-      "Beginner-friendly ETFs":(a,b)=>b.match-a.match,
-      "Lower risk first":(a,b)=>a.risk-b.risk||b.match-a.match,
-      "Higher quality first":(a,b)=>b.quality-a.quality||b.match-a.match,
-      "Growth-focused":(a,b)=>b.growth-a.growth||b.match-a.match,
-      "Dividend-focused":(a,b)=>b.dividend-a.dividend||b.match-a.match,
+      "Good for beginners":(a,b)=>a.risk-b.risk||b.stability-a.stability||b.match-a.match,
+      "More diversified":(a,b)=>b.stability-a.stability||a.risk-b.risk||b.match-a.match,
+      "Lower volatility":(a,b)=>a.risk-b.risk||b.stability-a.stability,
+      "Higher quality":(a,b)=>b.quality-a.quality||b.match-a.match,
+      "Growth focused":(a,b)=>b.growth-a.growth||b.match-a.match,
+      "Dividend focused":(a,b)=>b.dividend-a.dividend||b.match-a.match,
+      "ETFs only":(a,b)=>b.match-a.match,
+      "Individual stocks":(a,b)=>b.match-a.match,
     };
     return rows.sort(sorters[browseMode]);
   },[current,typeFilter,searchText,portfolio,browseMode]);
@@ -139,7 +143,7 @@ export default function PortfolioBuilder(){
           <strong>{Number(current.pct).toFixed(1)}%</strong> target
           {!percentageOnly && <> • <strong>${categoryTargetDollars.toLocaleString(undefined,{maximumFractionDigits:0})}</strong></>}
         </p>
-        <p>{guidance.role}</p>
+        <p>{guidance.role}</p><p className="educationalNotice"><strong>Why am I seeing this category?</strong> PortfolioPath uses your questionnaire to create an educational model allocation. The category weight is a learning example, not personalized investment advice.</p>
         <div className="progress" aria-label={`Builder progress: ${idx+1} of ${allocation.length}`}>
           <span style={{width:`${((idx+1)/allocation.length)*100}%`}}/>
         </div>
@@ -202,11 +206,14 @@ export default function PortfolioBuilder(){
           <label className="field">Not sure what to search? Show me
             <select value={browseMode} onChange={e=>setBrowseMode(e.target.value as any)}>
               <option>Best fit</option>
-              <option>Beginner-friendly ETFs</option>
-              <option>Lower risk first</option>
-              <option>Higher quality first</option>
-              <option>Growth-focused</option>
-              <option>Dividend-focused</option>
+              <option>Good for beginners</option>
+              <option>More diversified</option>
+              <option>Lower volatility</option>
+              <option>Higher quality</option>
+              <option>Growth focused</option>
+              <option>Dividend focused</option>
+              <option>ETFs only</option>
+              <option>Individual stocks</option>
             </select>
           </label>
         </div>
@@ -222,8 +229,10 @@ export default function PortfolioBuilder(){
                 <span className="statusBadge statusInfo">#{rank} in {current.name}</span>
                 <h3 style={{fontSize:21,margin:"10px 0 4px"}}>{s.ticker} — {s.name}</h3>
                 <p className="muted">{s.type} • {s.category}</p>
-                <p><strong>Why it appears:</strong> Its quality, growth, stability, risk characteristics, and portfolio role rank relatively well for this category and your profile.</p>
-                <p className="helpText">Fit is a research-ranking tool, not an expected-return forecast.</p>
+                <p><strong>What it is:</strong> {s.type==="ETF"?"A fund that can hold many underlying investments, which can make diversification easier to understand and practice.":"An individual company stock, so its results depend more heavily on one business."}</p>
+                <p><strong>Why am I seeing this?</strong> Its quality, growth, stability, risk characteristics, and category role rank relatively well within this educational research list.</p>
+                {s.type==="ETF"&&<span className="statusBadge statusGood">Beginner starting point</span>}
+                <p className="helpText">Category Fit is a research-ranking tool, not an expected-return forecast or investment recommendation.</p>
               </div>
               <div style={{textAlign:"right"}}>
                 <div className="kpi">{Number(s.match).toFixed(0)}</div>
@@ -236,8 +245,13 @@ export default function PortfolioBuilder(){
               <div className="card"><span className="muted">Quality</span><div className="kpi" style={{fontSize:20}}>{s.quality}/100</div></div>
               <div className="card"><span className="muted">Growth</span><div className="kpi" style={{fontSize:20}}>{s.growth}/100</div></div>
               <div className="card"><span className="muted">Stability</span><div className="kpi" style={{fontSize:20}}>{s.stability}/100</div></div>
+              <div className="card"><span className="muted">Diversification</span><div className="kpi" style={{fontSize:20}}>{s.type==="ETF"?"Higher":"Lower"}</div></div>
             </div>
 
+            <div className="card" style={{marginTop:12}}>
+              <strong>Before selecting, research:</strong>
+              <ul>{s.type==="ETF"?<><li>What the fund actually owns and how concentrated its top holdings are.</li><li>Expense ratio, diversification, and overlap with other ETFs you selected.</li></>:<><li>How the company makes money and whether revenue/profits are improving.</li><li>Valuation, debt, competitive position, and risks specific to the business.</li></>}</ul>
+            </div>
             <div className="actions">
               <Link className="btn btnSecondary" href={`/research/${s.ticker}?portfolio=${params.id}&category=${encodeURIComponent(current.name)}`}>Full Guided Research</Link>
               <label className="field" style={{margin:0,minWidth:210}}>
