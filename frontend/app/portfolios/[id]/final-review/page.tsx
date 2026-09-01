@@ -7,10 +7,9 @@ export default async function FinalPortfolioReview({params}:{params:Promise<{id:
   const {data:{user}}=await supabase.auth.getUser();
   if(!user)return <section className="panel"><p>Please sign in.</p></section>;
 
-  const [{data:p},{data:selections},{data:checks}] = await Promise.all([
+  const [{data:p},{data:selections}] = await Promise.all([
     supabase.from("portfolios").select("*").eq("id",id).eq("user_id",user.id).single(),
-    supabase.from("portfolio_selections").select("*").eq("portfolio_id",id).eq("user_id",user.id),
-    supabase.from("research_checkpoints").select("*").eq("portfolio_id",id).eq("user_id",user.id)
+    supabase.from("portfolio_selections").select("*").eq("portfolio_id",id).eq("user_id",user.id)
   ]);
 
   const allocation=p?.risk_profile?.allocation??[];
@@ -22,7 +21,6 @@ export default async function FinalPortfolioReview({params}:{params:Promise<{id:
   });
   const largest=[...chosen].sort((a:any,b:any)=>Number(b.planned_amount)-Number(a.planned_amount))[0];
   const largestPct=total && largest ? Number(largest.planned_amount)/total*100 : 0;
-  const completedChecks=(checks??[]).filter((x:any)=>x.reason&&x.main_risk).length;
 
   return (
     <>
@@ -33,7 +31,6 @@ export default async function FinalPortfolioReview({params}:{params:Promise<{id:
         <div className="grid">
           <div className="card"><span className="muted">Planned portfolio</span><div className="kpi">${total.toLocaleString(undefined,{maximumFractionDigits:0})}</div></div>
           <div className="card"><span className="muted">Holdings</span><div className="kpi">{chosen.length}</div></div>
-          <div className="card"><span className="muted">Research checkpoints</span><div className="kpi">{completedChecks}/{chosen.length}</div></div>
           <div className="card"><span className="muted">Largest position</span><div className="kpi" style={{fontSize:20}}>{largest?.symbol??"—"} {largestPct?`${largestPct.toFixed(1)}%`:""}</div></div>
         </div>
       </section>
@@ -62,9 +59,8 @@ export default async function FinalPortfolioReview({params}:{params:Promise<{id:
         <h2>Where should you pay attention?</h2>
         <ul>
           <li>{largestPct>15 ? `Your largest position is ${largest?.symbol} at ${largestPct.toFixed(1)}%, which creates meaningful single-position concentration.` : "No single planned position exceeds the strongest concentration warning threshold."}</li>
-          <li>{completedChecks<chosen.length ? `${chosen.length-completedChecks} selected holding(s) do not yet have a completed research checkpoint.` : "Every selected holding has a completed learning checkpoint."}</li>
           <li>Review ETF overlap before using multiple funds that may own many of the same securities.</li>
-          <li>Use Performance and Alerts later to monitor changes rather than reacting to short-term price moves alone.</li>
+          <li>Use Alerts and periodic research reviews to monitor meaningful changes rather than reacting to short-term price moves alone.</li>
         </ul>
       </section>
 
@@ -78,7 +74,7 @@ export default async function FinalPortfolioReview({params}:{params:Promise<{id:
         </ol>
         <div className="actions">
           <Link className="btn btnSecondary" href={`/portfolios/${id}/overlap`}>Check ETF overlap</Link>
-          <Link className="btn btnPrimary" href={`/portfolios/${id}/practice`}>Enter Practice Mode</Link>
+          <Link className="btn btnPrimary" href={`/portfolios/${id}/insights`}>View Portfolio Insights</Link>
         </div>
       </section>
     </>

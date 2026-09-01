@@ -9,13 +9,11 @@ export default async function AlertsPage({params}:{params:Promise<{id:string}>})
   const [
     {data:portfolio},
     {data:selections},
-    {data:snapshots},
-    {data:performance}
+    {data:snapshots}
   ]=await Promise.all([
     supabase.from("portfolios").select("*").eq("id",id).single(),
     supabase.from("portfolio_selections").select("*").eq("portfolio_id",id),
-    supabase.from("security_score_snapshots").select("*").eq("portfolio_id",id).order("created_at",{ascending:false}).limit(250),
-    supabase.from("performance_snapshots").select("*").eq("portfolio_id",id).order("snapshot_date",{ascending:false}).limit(1)
+    supabase.from("security_score_snapshots").select("*").eq("portfolio_id",id).order("created_at",{ascending:false}).limit(250)
   ]);
 
   if(!portfolio)return <section className="panel"><h1>Portfolio not found</h1></section>;
@@ -36,7 +34,7 @@ export default async function AlertsPage({params}:{params:Promise<{id:string}>})
   alerts.push(...portfolioStructureAlerts(
     selections??[],
     portfolio.risk_profile?.allocation??[],
-    (performance??[])[0]??null,
+    null,
     id
   ));
 

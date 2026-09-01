@@ -8,11 +8,10 @@ export async function GET(_:NextRequest,{params}:{params:Promise<{id:string}>}){
   const {data:{user}}=await supabase.auth.getUser();
   if(!user)return NextResponse.json({error:"Unauthorized"},{status:401});
 
-  const [{data:p},{data:sels},{data:scores},{data:perf}]=await Promise.all([
+  const [{data:p},{data:sels},{data:scores}]=await Promise.all([
     supabase.from("portfolios").select("*").eq("id",id).eq("user_id",user.id).single(),
     supabase.from("portfolio_selections").select("*").eq("portfolio_id",id).eq("user_id",user.id),
     supabase.from("security_score_snapshots").select("*").eq("portfolio_id",id).eq("user_id",user.id).order("created_at",{ascending:false}).limit(250),
-    supabase.from("performance_snapshots").select("*").eq("portfolio_id",id).eq("user_id",user.id).order("snapshot_date",{ascending:false}).limit(1),
   ]);
 
   if(!p)return NextResponse.json({error:"Portfolio not found"},{status:404});
@@ -27,7 +26,7 @@ export async function GET(_:NextRequest,{params}:{params:Promise<{id:string}>}){
   for(const rows of Object.values(grouped)){
     alerts.push(...compareScoreSnapshots(rows[0],rows[1]??null,id));
   }
-  alerts.push(...portfolioStructureAlerts(sels??[],p.risk_profile?.allocation??[],(perf??[])[0]??null,id));
+  alerts.push(...portfolioStructureAlerts(sels??[],p.risk_profile?.allocation??[],null,id));
 
   return NextResponse.json({alerts:sortAlerts(alerts).slice(0,20)});
 }

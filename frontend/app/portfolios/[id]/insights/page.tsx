@@ -6,18 +6,16 @@ export default async function InsightsPage({params}:{params:Promise<{id:string}>
   const {id}=await params;
   const supabase=await createClient();
 
-  const [{data:portfolio},{data:selections},{data:watchlist},{data:journal},{data:snapshots}] = await Promise.all([
+  const [{data:portfolio},{data:selections},{data:watchlist},{data:journal}] = await Promise.all([
     supabase.from("portfolios").select("*").eq("id",id).single(),
     supabase.from("portfolio_selections").select("*").eq("portfolio_id",id),
     supabase.from("watchlist_items").select("*").eq("portfolio_id",id).order("created_at",{ascending:false}),
     supabase.from("journal_entries").select("*").eq("portfolio_id",id).order("entry_date",{ascending:false}).limit(20),
-    supabase.from("performance_snapshots").select("*").eq("portfolio_id",id).order("snapshot_date",{ascending:false}).limit(1),
   ]);
 
   if(!portfolio)return <section className="panel">Portfolio not found.</section>;
   if(!portfolio.risk_profile)return <section className="panel"><h1>Complete your investor profile first</h1><Link className="btn btnPrimary" href={`/portfolios/${id}/questionnaire`}>Start Questionnaire</Link></section>;
 
-  const latest=(snapshots??[])[0]??null;
   const rows=selections??[];
   const targetAllocation=portfolio.risk_profile?.allocation??[];
   const categoryAmounts=allocationByCategory(rows);
@@ -25,16 +23,14 @@ export default async function InsightsPage({params}:{params:Promise<{id:string}>
   const targetAmount=Number(portfolio.risk_profile?.answers?.amount??0);
   const base=totalSelected>0?totalSelected:targetAmount;
   const largest=largestPosition(rows);
-  const health=simpleHealthScore(rows,latest);
+  const health=simpleHealthScore(rows,null);
   const goal=portfolio.goal??null;
-  const currentValue=latest?.portfolio_value!=null?Number(latest.portfolio_value):totalSelected;
+  const currentValue=totalSelected;
   const goalProgress=goal?.targetAmount?Math.min(100,currentValue/Number(goal.targetAmount)*100):null;
 
   const actions:{title:string;body:string;href?:string}[]=[];
   if(!goal?.targetAmount)actions.push({title:"Set an investment goal",body:"Add a target portfolio value and date so PortfolioPath can measure progress."});
   if(largest && largest.pct>15)actions.push({title:"Review concentration",body:`${largest.symbol} represents ${largest.pct.toFixed(1)}% of the selected portfolio.`,href:`/portfolios/${id}/review`});
-  if(latest?.excess_return!=null && Number(latest.excess_return)<-5)actions.push({title:"Review underperformance",body:`The portfolio is trailing the benchmark by ${Math.abs(Number(latest.excess_return)).toFixed(1)} percentage points.`,href:`/portfolios/${id}/review`});
-  if(latest?.max_drawdown!=null && Number(latest.max_drawdown)<=-20)actions.push({title:"Review downside risk",body:`Maximum drawdown has reached ${Number(latest.max_drawdown).toFixed(1)}%.`,href:`/portfolios/${id}/performance`});
   if(health>=85 && actions.length===0)actions.push({title:"Portfolio looks well aligned",body:"No major portfolio-structure issues are currently detected. Continue monitoring rather than changing investments unnecessarily."});
 
   return (
@@ -116,7 +112,6 @@ export default async function InsightsPage({params}:{params:Promise<{id:string}>
 
       <section className="panel" style={{marginTop:16}}>
         <div className="actions">
-          <Link className="btn btnSecondary" href={`/portfolios/${id}/performance`}>Performance</Link>
           <Link className="btn btnSecondary" href={`/portfolios/${id}/review`}>Portfolio Review</Link>
           <Link className="btn btnSecondary" href={`/portfolios/${id}/overlap`}>ETF Overlap</Link>
           <Link className="btn btnSecondary" href={`/portfolios/${id}/alerts`}>Alerts</Link>

@@ -2,7 +2,7 @@ import "./globals.css";
 
 export const metadata = {
   title: "PortfolioPath",
-  description: "Guided portfolio construction, practice, tracking, and research."
+  description: "Guided portfolio construction, investing education, and research."
 };
 
 export default function RootLayout({children}:{children:React.ReactNode}) {
@@ -15,7 +15,7 @@ export default function RootLayout({children}:{children:React.ReactNode}) {
             <a className="brand" href="/dashboard" aria-label="PortfolioPath dashboard">PortfolioPath</a>
             <nav className="navLinks" aria-label="Primary navigation">
               <a className="btn btnSecondary" href="/dashboard">Dashboard</a>
-              <a className="btn btnSecondary" href="/alpha">Alpha</a>
+              <a className="btn btnSecondary" href="/profile">Profile</a>
               <a className="btn btnSecondary" href="/system-status">Status</a>
               <a className="btn btnSecondary" href="/logout">Sign out</a>
             </nav>
@@ -28,7 +28,7 @@ export default function RootLayout({children}:{children:React.ReactNode}) {
               <a href="/terms">Terms</a>
               <a href="/system-status">System Status</a>
             </div>
-            <p className="muted">PortfolioPath alpha • Educational portfolio research and practice tools.</p>
+            <p className="muted">PortfolioPath • Educational portfolio-building and research tools.</p>
           </footer>
         </main>
       </body>

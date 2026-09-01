@@ -117,11 +117,11 @@ export const categoryGuidance: Record<string, { role: string; questions: string[
 
 export function guidanceFor(category?: string) {
   return categoryGuidance[category ?? ""] ?? {
-    role: "Fill this allocation role with an investment you understand and can compare with reasonable alternatives.",
+    role: "Fill this allocation role with an investment you understand well enough to explain its purpose, strengths, and risks.",
     questions: [
       "What role does this investment play?",
       "What are its major risks?",
-      "How does it compare with alternatives?",
+      "What are its main strengths and risks?",
       "Does it overlap with holdings already selected?"
     ]
   };

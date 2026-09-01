@@ -1,7 +1,5 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import LiveSecurityScore from "@/components/LiveSecurityScore";
-import LiveETFScore from "@/components/LiveETFScore";
 import { securityUniverse } from "@/lib/securityUniverse";
 import { guidanceFor, researchResources } from "@/lib/researchGuidance";
 
@@ -9,7 +7,7 @@ const API=process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000";
 
 async function getResearch(ticker:string){
   try{
-    const r=await fetch(`${API}/api/security/${encodeURIComponent(ticker)}`,{cache:"no-store"});
+    const r=await fetch(`${API}/api/security/${encodeURIComponent(ticker)}`,{next:{revalidate:2592000}});
     if(!r.ok)return null;
     return await r.json();
   }catch{return null;}
@@ -67,11 +65,7 @@ export default async function ResearchPage({
           <div className="card"><span className="muted">Sector / category</span><div className="kpi" style={{fontSize:20}}>{profile?.sector ?? categoryName ?? "—"}</div></div>
           <div className="card"><span className="muted">Market cap</span><div className="kpi" style={{fontSize:20}}>{quote?.marketCap ? `$${Number(quote.marketCap).toLocaleString()}` : "—"}</div></div>
         </div>
-        <div style={{marginTop:16}}>
-          {securityType==="ETF"
-            ? <LiveETFScore ticker={symbol} profile={investorProfile} category={categoryName} portfolioId={portfolioId}/>
-            : <LiveSecurityScore ticker={symbol} profile={investorProfile} portfolioId={portfolioId}/>}
-        </div>
+        <p className="helpText" style={{marginTop:16}}>PortfolioPath refreshes in-app stock and fund information on a monthly cadence. The displayed snapshot may be up to 30 days old and is not real-time.</p>
       </section>
 
       <section className="panel" style={{marginTop:16}}>
@@ -93,7 +87,7 @@ export default async function ResearchPage({
             <ul>{r.lookFor.map(x=><li key={x}>{x}</li>)}</ul>
             {href
               ? <a className="btn btnSecondary" href={href} target="_blank" rel="noreferrer">Open resource ↗</a>
-              : <p className="muted">PortfolioPath will surface this comparison directly in the app as live data becomes available.</p>}
+              : <p className="muted">This source is best reviewed directly using the external research links above.</p>}
           </div>
         })}
       </section>
@@ -104,10 +98,10 @@ export default async function ResearchPage({
         <ol>
           <li>What role it plays in the portfolio.</li>
           <li>The two or three risks that matter most.</li>
-          <li>How it differs from at least one alternative in the same category.</li>
+          <li>The main strengths and risks you found in your research.</li>
           <li>Why you are choosing it for its characteristics rather than its recent price performance.</li>
         </ol>
-        {portfolioId && <div className="actions"><Link className="btn btnPrimary" href={`/portfolios/${portfolioId}/build`}>Return to options and compare</Link></div>}
+        {portfolioId && <div className="actions"><Link className="btn btnPrimary" href={`/portfolios/${portfolioId}/build`}>Return to portfolio options</Link></div>}
       </section>
 
       {profile?.description && <section className="panel" style={{marginTop:16}}>

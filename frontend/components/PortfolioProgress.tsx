@@ -1,12 +1,10 @@
 import Link from "next/link";
 
-export default function PortfolioProgress({id,portfolio,selections,transactions}:{id:string;portfolio:any;selections:any[];transactions:any[]}){
+export default function PortfolioProgress({id,portfolio,selections}:{id:string;portfolio:any;selections:any[]}){
   const steps=[
     {name:"Investor Profile",done:!!portfolio.risk_profile,href:`/portfolios/${id}/questionnaire`},
     {name:"Recommended Allocation",done:!!portfolio.risk_profile,href:`/portfolios/${id}/recommendation`},
     {name:"Build Portfolio",done:(selections?.length??0)>0,href:`/portfolios/${id}/build?step=0`},
-    {name:"Practice Transactions",done:(transactions?.length??0)>0,href:`/portfolios/${id}/practice`},
-    {name:"Performance",done:(transactions?.length??0)>0,href:`/portfolios/${id}/performance`},
     {name:"Portfolio Review",done:(selections?.length??0)>0,href:`/portfolios/${id}/review`},
     {name:"Insights",done:(selections?.length??0)>0,href:`/portfolios/${id}/insights`},
   ];

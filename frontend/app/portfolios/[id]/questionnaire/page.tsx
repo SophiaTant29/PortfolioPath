@@ -9,7 +9,7 @@ import {
 } from "@/lib/investorProfile";
 
 const initial:QuestionnaireAnswers = {
-  amount:10000,
+  amount:0,
   goal:"moderate",
   horizon:"5to10",
   dropReaction:"hold",
@@ -82,7 +82,7 @@ export default function QuestionnairePage(){
 
       <Field n={1} title="How much are you planning to invest?">
         <label className="field">Investment amount
-          <input type="number" min="1" step="100" value={a.amount} onChange={e=>set("amount",Number(e.target.value))}/>
+          <input type="number" min="0.01" step="any" inputMode="decimal" placeholder="Enter any amount, e.g. 7250" value={a.amount>0?a.amount:""} onChange={e=>set("amount",e.target.value===""?0:Number(e.target.value))}/>
         </label>
       </Field>
 

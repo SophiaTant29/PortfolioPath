@@ -42,7 +42,7 @@ export default async function SummaryPage({params}:{params:Promise<{id:string}>}
         <div className="actions">
           <Link className="btn btnSecondary" href={`/portfolios/${id}/build?step=0`}>Edit Portfolio</Link>
           <Link className="btn btnSecondary" href={`/portfolios/${id}`}>Return to Portfolio</Link>
-          <Link className="btn btnPrimary" href={`/portfolios/${id}/practice`}>Start Practice Mode</Link>
+          <Link className="btn btnPrimary" href={`/portfolios/${id}/final-review`}>Review My Portfolio</Link>
         </div>
       </section>
     </>

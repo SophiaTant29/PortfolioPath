@@ -5,7 +5,6 @@ import { createClient } from "@/lib/supabase/client";
 
 export default function NewPortfolioPage(){
   const [name,setName]=useState("Long-Term Growth");
-  const [mode,setMode]=useState("Practice");
   const [startDate,setStartDate]=useState(new Date().toISOString().slice(0,10));
   const [message,setMessage]=useState("");
 
@@ -16,7 +15,7 @@ export default function NewPortfolioPage(){
     if(!user){window.location.href="/login";return;}
 
     const {data,error}=await supabase.from("portfolios").insert({
-      user_id:user.id,name,mode,start_date:startDate,benchmark_symbol:"SP500TR"
+      user_id:user.id,name,mode:"Practice",start_date:startDate,benchmark_symbol:"SP500TR"
     }).select("id").single();
 
     if(error){setMessage(error.message);return;}
@@ -25,10 +24,10 @@ export default function NewPortfolioPage(){
 
   return (
     <section className="panel" style={{maxWidth:680}}>
-      <h1>Create Portfolio</h1>
+      <h1>Create Learning Portfolio</h1>
+      <p className="muted">Every PortfolioPath portfolio is an educational exercise, so there is no separate purpose or trading mode to choose.</p>
       <form onSubmit={submit}>
         <label className="field">Portfolio name<input value={name} onChange={e=>setName(e.target.value)} required /></label>
-        <label className="field">Purpose<select value={mode} onChange={e=>setMode(e.target.value)}><option>Practice</option><option>Track</option><option>Strategy Test</option></select></label>
         <label className="field">Start date<input type="date" value={startDate} onChange={e=>setStartDate(e.target.value)} required /></label>
         <button className="btn btnPrimary">Create Portfolio</button>
       </form>

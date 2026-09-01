@@ -17,7 +17,7 @@ export default async function DashboardPage() {
 
   const {data:portfolios}=await supabase
     .from("portfolios")
-    .select("id,name,mode,start_date,created_at")
+    .select("id,name,start_date,created_at")
     .order("created_at",{ascending:false});
 
   return (
@@ -35,7 +35,7 @@ export default async function DashboardPage() {
         {(portfolios ?? []).map(p=>(
           <Link key={p.id} href={`/portfolios/${p.id}`} className="card">
             <strong>{p.name}</strong>
-            <p className="muted">{p.mode} • Started {p.start_date}</p>
+            <p className="muted">Learning portfolio • Started {p.start_date}</p>
           </Link>
         ))}
       </section>

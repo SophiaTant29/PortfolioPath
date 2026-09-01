@@ -7,7 +7,6 @@ import { createClient } from "@/lib/supabase/client";
 import { securityUniverse } from "@/lib/securityUniverse";
 import { guidanceFor } from "@/lib/researchGuidance";
 import { allocationExplanation } from "@/lib/allocationExplanations";
-import { comparisonTakeaways, whatMattersForComparison } from "@/lib/comparisonInsights";
 import CategoryCompletionReview from "@/components/CategoryCompletionReview";
 import { suggestedHoldingCount, equalWeightSuggestion, positionSizingExplanation } from "@/lib/positionSizing";
 import InvestmentResearchResources from "@/components/InvestmentResearchResources";
@@ -44,10 +43,10 @@ export default function PortfolioBuilder(){
   const [typeFilter,setTypeFilter]=useState<"All"|"Stock"|"ETF">("All");
   const [selections,setSelections]=useState<Record<string,Selection>>({});
   const [message,setMessage]=useState("");
-  const [liveScores,setLiveScores]=useState<Record<string,number>>({});
   const [expanded,setExpanded]=useState(false);
-  const [compare,setCompare]=useState<string[]>([]);
   const [showCompletion,setShowCompletion]=useState(false);
+  const [browseMode,setBrowseMode]=useState<"Best fit"|"Beginner-friendly ETFs"|"Lower risk first"|"Higher quality first"|"Growth-focused"|"Dividend-focused">("Best fit");
+  const [amountDrafts,setAmountDrafts]=useState<Record<string,string>>({});
 
   useEffect(()=>{(async()=>{
     const supabase=createClient();
@@ -80,16 +79,24 @@ export default function PortfolioBuilder(){
 
   const options=useMemo(()=>{
     if(!current)return [];
-    return securityUniverse
+    let rows=securityUniverse
       .filter(s=>s.category===current.name)
       .filter(s=>typeFilter==="All"||s.type===typeFilter)
       .filter(s=>`${s.ticker} ${s.name}`.toLowerCase().includes(searchText.toLowerCase()))
-      .map(s=>({...s,match:liveScores[s.ticker]>=0 ? liveScores[s.ticker] : fitScore(s,portfolio?.risk_profile)}))
-      .sort((a,b)=>b.match-a.match);
-  },[current,typeFilter,searchText,portfolio,liveScores]);
+      .map(s=>({...s,match:fitScore(s,portfolio?.risk_profile)}));
+    if(browseMode==="Beginner-friendly ETFs")rows=rows.filter(s=>s.type==="ETF");
+    const sorters:Record<string,(a:any,b:any)=>number>={
+      "Best fit":(a,b)=>b.match-a.match,
+      "Beginner-friendly ETFs":(a,b)=>b.match-a.match,
+      "Lower risk first":(a,b)=>a.risk-b.risk||b.match-a.match,
+      "Higher quality first":(a,b)=>b.quality-a.quality||b.match-a.match,
+      "Growth-focused":(a,b)=>b.growth-a.growth||b.match-a.match,
+      "Dividend-focused":(a,b)=>b.dividend-a.dividend||b.match-a.match,
+    };
+    return rows.sort(sorters[browseMode]);
+  },[current,typeFilter,searchText,portfolio,browseMode]);
 
-  const visibleOptions=expanded || searchText || typeFilter!=="All" ? options : options.slice(0,8);
-  const compared=options.filter((s:any)=>compare.includes(s.ticker));
+  const visibleOptions=expanded || searchText || typeFilter!=="All" || browseMode!=="Best fit" ? options : options.slice(0,12);
 
   if(loading)return <section className="panel">Loading portfolio builder…</section>;
   if(!portfolio)return <section className="panel">Portfolio not found.</section>;
@@ -115,35 +122,10 @@ export default function PortfolioBuilder(){
   }
 
   function goStep(next:number){
-    setSearchText(""); setTypeFilter("All"); setExpanded(false); setCompare([]); setShowCompletion(false);
+    setSearchText(""); setTypeFilter("All"); setBrowseMode("Best fit"); setExpanded(false); setShowCompletion(false);
     router.push(`/portfolios/${params.id}/build?step=${next}`);
   }
 
-  function toggleCompare(ticker:string){
-    setCompare(prev=>{
-      if(prev.includes(ticker))return prev.filter(x=>x!==ticker);
-      if(prev.length>=3){setMessage("Compare up to three investments at a time.");return prev}
-      setMessage("");
-      return [...prev,ticker];
-    });
-  }
-
-  async function loadLiveScore(ticker:string,type:"Stock"|"ETF",category:string){
-    if(liveScores[ticker]!=null)return;
-    try{
-      const base=process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000";
-      const endpoint=type==="ETF"?`${base}/api/etf/${encodeURIComponent(ticker)}/score`:`${base}/api/security/${encodeURIComponent(ticker)}/score`;
-      const body=type==="ETF"
-        ? {investor_profile:{profileName:portfolio?.risk_profile?.profileName??"Balanced",overallRisk:Number(portfolio?.risk_profile?.overallRisk??55)},portfolio_category:category}
-        : {investor_profile:{profileName:portfolio?.risk_profile?.profileName??"Balanced",overallRisk:Number(portfolio?.risk_profile?.overallRisk??55)}};
-      const r=await fetch(endpoint,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)});
-      if(!r.ok)throw new Error();
-      const j=await r.json();
-      setLiveScores(prev=>({...prev,[ticker]:Number(j.match_score)}));
-    }catch{
-      setLiveScores(prev=>({...prev,[ticker]:-1}));
-    }
-  }
 
   const totalSelected=Object.values(selections).reduce((s,x)=>s+x.amount,0);
   const target=Number(portfolio.risk_profile?.answers?.amount??0);
@@ -203,7 +185,8 @@ export default function PortfolioBuilder(){
         <div style={{display:"flex",justifyContent:"space-between",gap:16,flexWrap:"wrap",alignItems:"end"}}>
           <div>
             <h2 style={{marginBottom:4}}>Research library</h2>
-            <p className="muted" style={{marginTop:0}}>Most relevant options appear first so you are not overwhelmed. Search or filter anytime.</p>
+            <p className="muted" style={{marginTop:0}}>Twelve starting options appear automatically. If you do not know a ticker to search, use the “Show me” menu to browse by a simple characteristic, or open the full list.</p>
+            <p className="helpText">PortfolioPath research metrics are refreshed on a monthly cadence and may be up to 30 days old. They are not real-time market data.</p>
           </div>
           <span className="statusBadge statusInfo">{options.length} matching options</span>
         </div>
@@ -216,7 +199,16 @@ export default function PortfolioBuilder(){
               <option>All</option><option>Stock</option><option>ETF</option>
             </select>
           </label>
-          <div className="field"><span className="muted">Compare</span><div className="kpi">{compare.length}/3</div></div>
+          <label className="field">Not sure what to search? Show me
+            <select value={browseMode} onChange={e=>setBrowseMode(e.target.value as any)}>
+              <option>Best fit</option>
+              <option>Beginner-friendly ETFs</option>
+              <option>Lower risk first</option>
+              <option>Higher quality first</option>
+              <option>Growth-focused</option>
+              <option>Dividend-focused</option>
+            </select>
+          </label>
         </div>
       </section>
 
@@ -236,8 +228,6 @@ export default function PortfolioBuilder(){
               <div style={{textAlign:"right"}}>
                 <div className="kpi">{Number(s.match).toFixed(0)}</div>
                 <div className="muted" style={{fontSize:12}}>Category Fit / 100</div>
-                {liveScores[s.ticker]==null && <button className="btn btnSecondary" style={{marginTop:8}} onClick={()=>loadLiveScore(s.ticker,s.type,s.category)}>Refresh with live data</button>}
-                {liveScores[s.ticker]===-1 && <div className="muted" style={{fontSize:12,marginTop:5}}>Live backend unavailable; showing fallback ranking.</div>}
               </div>
             </div>
 
@@ -250,26 +240,24 @@ export default function PortfolioBuilder(){
 
             <div className="actions">
               <Link className="btn btnSecondary" href={`/research/${s.ticker}?portfolio=${params.id}&category=${encodeURIComponent(current.name)}`}>Full Guided Research</Link>
-              <button className="btn btnSecondary" onClick={()=>toggleCompare(s.ticker)}>{compare.includes(s.ticker)?"Remove from Compare":"Compare"}</button>
               <label className="field" style={{margin:0,minWidth:210}}>
                 {percentageOnly ? "Portfolio weight (%)" : "Planned amount ($)"}
                 <input
                   type="number"
                   min="0"
-                  step={percentageOnly ? "0.5" : "50"}
-                  value={percentageOnly && plannedInvestment<=0
-                    ? (selected>0 && categoryTargetDollars>0 ? ((selected/categoryTargetDollars)*Number(current.pct)).toFixed(1) : 0)
-                    : selected}
-                  onChange={e=>{
-                    const raw=Number(e.target.value);
-                    if(percentageOnly && plannedInvestment<=0){
-                      const syntheticBase=10000;
-                      const amount=(raw/100)*syntheticBase;
-                      saveAmount(s,amount);
-                    } else {
-                      saveAmount(s,raw);
-                    }
+                  step="any"
+                  inputMode="decimal"
+                  placeholder={percentageOnly ? "Enter weight" : "Enter amount"}
+                  value={amountDrafts[s.ticker] ?? (selected>0 ? (percentageOnly && plannedInvestment<=0 ? ((selected/10000)*100).toFixed(2).replace(/\.00$/,"") : String(selected)) : "")}
+                  onChange={e=>setAmountDrafts(prev=>({...prev,[s.ticker]:e.target.value}))}
+                  onBlur={async e=>{
+                    const raw=e.target.value.trim();
+                    if(raw===""){await saveAmount(s,0);setAmountDrafts(prev=>({...prev,[s.ticker]:""}));return;}
+                    const entered=Number(raw);
+                    if(!Number.isFinite(entered)||entered<0){setMessage("Enter a valid number of zero or greater.");return;}
+                    await saveAmount(s,percentageOnly && plannedInvestment<=0 ? (entered/100)*10000 : entered);
                   }}
+                  onKeyDown={e=>{if(e.key==="Enter"){e.preventDefault();e.currentTarget.blur();}}}
                 />
               </label>
             </div>
@@ -281,34 +269,12 @@ export default function PortfolioBuilder(){
         {!visibleOptions.length && <section className="panel"><p>No investments match the current search/filter.</p></section>}
       </section>
 
-      {options.length>8 && !searchText && typeFilter==="All" &&
+      {options.length>12 && !searchText && typeFilter==="All" && browseMode==="Best fit" &&
         <div className="actions" style={{justifyContent:"center",marginTop:14}}>
           <button className="btn btnSecondary" onClick={()=>setExpanded(v=>!v)}>{expanded?"Show top options only":`Browse all ${options.length} options`}</button>
         </div>
       }
 
-      {compared.length>=2 && <section className="panel" style={{marginTop:16}}>
-        <h2>Compare alternatives</h2>
-        <p className="muted">Use this table to see why similarly ranked investments may still play different roles.</p>
-        <div className="card" style={{marginBottom:12}}>
-          <h3>What actually matters here?</h3>
-          <ul>{whatMattersForComparison(compared.map((x:any)=>x.type)).map(x=><li key={x}>{x}</li>)}</ul>
-        </div>
-        <div className="card" style={{marginBottom:12}}>
-          <h3>Tradeoffs PortfolioPath sees</h3>
-          <ul>{comparisonTakeaways(compared as any).map(x=><li key={x}>{x}</li>)}</ul>
-        </div>
-        <div style={{overflowX:"auto"}}>
-          <table className="comparisonTable">
-            <thead><tr><th>Investment</th><th>Type</th><th>Fit</th><th>Risk</th><th>Quality</th><th>Growth</th><th>Stability</th><th>Research</th></tr></thead>
-            <tbody>{compared.map((s:any)=><tr key={s.ticker}>
-              <td><strong>{s.ticker}</strong><br/><span className="muted">{s.name}</span></td>
-              <td>{s.type}</td><td>{s.match}</td><td>{Math.round(s.risk/10)}/10</td><td>{s.quality}</td><td>{s.growth}</td><td>{s.stability}</td>
-              <td><Link href={`/research/${s.ticker}?portfolio=${params.id}&category=${encodeURIComponent(current.name)}`}>Open guide</Link></td>
-            </tr>)}</tbody>
-          </table>
-        </div>
-      </section>}
 
       <section className="panel" style={{marginTop:16}}>
         <p><strong>Total portfolio selected:</strong> {percentageOnly
