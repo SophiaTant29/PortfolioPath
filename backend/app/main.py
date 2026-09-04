@@ -9,14 +9,25 @@ from .scoring import build_security_scores, quality_from_component_scores, match
 from .peer_scoring import build_peer_relative_scores
 from .etf_scoring import build_etf_score, overlap_between
 from .holding_performance import holding_return_from_transactions
+from .etf_holdings_store import snapshot_metadata
 
 app=FastAPI(title="PortfolioPath Analytics API",version="0.2.0")
 
+frontend_origin=os.getenv("FRONTEND_ORIGIN","http://localhost:3000").rstrip("/")
+allowed_origins=list(dict.fromkeys(["http://localhost:3000","http://127.0.0.1:3000",frontend_origin]))
+# Vercel creates a new preview/deployment hostname on each push. Restrict the
+# regex to PortfolioPath deployments under the owner's Vercel team rather than
+# allowing arbitrary *.vercel.app origins.
+vercel_origin_regex=os.getenv(
+    "FRONTEND_ORIGIN_REGEX",
+    r"^https://portfolio-path-[a-z0-9-]+-sophia29-6091\.vercel\.app$"
+)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[os.getenv("FRONTEND_ORIGIN","http://localhost:3000")],
+    allow_origins=allowed_origins,
+    allow_origin_regex=vercel_origin_regex,
     allow_credentials=True,
-    allow_methods=["GET","POST"],
+    allow_methods=["GET","POST","OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -26,7 +37,7 @@ def health():
         "status":"ok",
         "market_data_configured": bool(os.getenv("FMP_API_KEY")),
         "service":"PortfolioPath Analytics API",
-        "version":"0.11.0",
+        "version":"0.12.0",
     }
 
 @app.get("/api/security/{symbol}")
@@ -305,18 +316,34 @@ async def etf_overlap(req:ETFOverlapRequest):
     if len(symbols)<2:
         return {"symbols":symbols,"pairwise":[],"errors":{},"message":"At least two ETFs are required."}
     results=await asyncio.gather(*[market_data.etf_holdings(s) for s in symbols],return_exceptions=True)
-    holdings_list=[]; errors={}
+    holdings_by_symbol={}; errors={}
     for symbol,result in zip(symbols,results):
         if isinstance(result,Exception):
-            errors[symbol]=str(result); holdings_list.append([])
-        else:
-            holdings_list.append(result)
+            errors[symbol]=str(result)
+            continue
+        rows=(result or {}).get("holdings",[]) if isinstance(result,dict) else result
+        if not rows:
+            errors[symbol]="Not yet included in the current monthly ETF holdings snapshot."
+            continue
+        holdings_by_symbol[symbol]=result
     pairwise=[]
     for i in range(len(symbols)):
         for j in range(i+1,len(symbols)):
-            result=overlap_between(holdings_list[i],holdings_list[j])
-            pairwise.append({"a":symbols[i],"b":symbols[j],**result})
-    return {"symbols":symbols,"pairwise":pairwise,"errors":errors,"data_cadence":"monthly"}
+            a,b=symbols[i],symbols[j]
+            if a not in holdings_by_symbol or b not in holdings_by_symbol:
+                continue
+            result=overlap_between(holdings_by_symbol[a],holdings_by_symbol[b])
+            pairwise.append({"a":a,"b":b,**result})
+    meta=snapshot_metadata()
+    return {
+        "symbols":symbols,
+        "pairwise":pairwise,
+        "errors":errors,
+        "data_cadence":"monthly",
+        "snapshot_date":meta.get("snapshot_date"),
+        "coverage_note":meta.get("coverage_note"),
+        "supported_symbols":meta.get("supported_symbols",[]),
+    }
 
 
 class HoldingPerformanceRequest(BaseModel):

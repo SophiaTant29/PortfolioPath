@@ -1,0 +1,57 @@
+{
+  "snapshot_date": "2026-08-31",
+  "coverage_note": "PortfolioPath monthly holdings snapshot. Most funds include leading holdings rather than the complete portfolio, so overlap can be a minimum observed overlap rather than total fund overlap.",
+  "funds": {
+    "VOO": {"benchmark":"S&P 500","holdings":[
+      {"ticker":"NVDA","weight":0.081},{"ticker":"AAPL","weight":0.071},{"ticker":"MSFT","weight":0.062},{"ticker":"AMZN","weight":0.041},{"ticker":"META","weight":0.031},{"ticker":"AVGO","weight":0.029},{"ticker":"GOOGL","weight":0.026},{"ticker":"GOOG","weight":0.021},{"ticker":"TSLA","weight":0.020},{"ticker":"BRK.B","weight":0.018}
+    ]},
+    "IVV": {"benchmark":"S&P 500","holdings":[
+      {"ticker":"NVDA","weight":0.081},{"ticker":"AAPL","weight":0.071},{"ticker":"MSFT","weight":0.062},{"ticker":"AMZN","weight":0.041},{"ticker":"META","weight":0.031},{"ticker":"AVGO","weight":0.029},{"ticker":"GOOGL","weight":0.026},{"ticker":"GOOG","weight":0.021},{"ticker":"TSLA","weight":0.020},{"ticker":"BRK.B","weight":0.018}
+    ]},
+    "SPY": {"benchmark":"S&P 500","holdings":[
+      {"ticker":"NVDA","weight":0.081},{"ticker":"AAPL","weight":0.071},{"ticker":"MSFT","weight":0.062},{"ticker":"AMZN","weight":0.041},{"ticker":"META","weight":0.031},{"ticker":"AVGO","weight":0.029},{"ticker":"GOOGL","weight":0.026},{"ticker":"GOOG","weight":0.021},{"ticker":"TSLA","weight":0.020},{"ticker":"BRK.B","weight":0.018}
+    ]},
+    "SPLG": {"benchmark":"S&P 500","holdings":[
+      {"ticker":"NVDA","weight":0.081},{"ticker":"AAPL","weight":0.071},{"ticker":"MSFT","weight":0.062},{"ticker":"AMZN","weight":0.041},{"ticker":"META","weight":0.031},{"ticker":"AVGO","weight":0.029},{"ticker":"GOOGL","weight":0.026},{"ticker":"GOOG","weight":0.021},{"ticker":"TSLA","weight":0.020},{"ticker":"BRK.B","weight":0.018}
+    ]},
+    "QQQ": {"benchmark":"Nasdaq-100","holdings":[
+      {"ticker":"NVDA","weight":0.0867},{"ticker":"AAPL","weight":0.0762},{"ticker":"MSFT","weight":0.0562},{"ticker":"AMZN","weight":0.0458},{"ticker":"TSLA","weight":0.0380},{"ticker":"META","weight":0.0345},{"ticker":"WMT","weight":0.0343},{"ticker":"GOOGL","weight":0.0343},{"ticker":"GOOG","weight":0.0319},{"ticker":"AVGO","weight":0.0300}
+    ]},
+    "VTI": {"benchmark":"CRSP US Total Market","holdings":[
+      {"ticker":"NVDA","weight":0.069},{"ticker":"AAPL","weight":0.060},{"ticker":"MSFT","weight":0.052},{"ticker":"AMZN","weight":0.035},{"ticker":"META","weight":0.026},{"ticker":"AVGO","weight":0.024},{"ticker":"GOOGL","weight":0.022},{"ticker":"GOOG","weight":0.018},{"ticker":"TSLA","weight":0.017},{"ticker":"BRK.B","weight":0.015}
+    ]},
+    "SCHB": {"benchmark":"Dow Jones U.S. Broad Stock Market","holdings":[
+      {"ticker":"NVDA","weight":0.068},{"ticker":"AAPL","weight":0.059},{"ticker":"MSFT","weight":0.051},{"ticker":"AMZN","weight":0.034},{"ticker":"META","weight":0.026},{"ticker":"AVGO","weight":0.024},{"ticker":"GOOGL","weight":0.022},{"ticker":"GOOG","weight":0.018},{"ticker":"TSLA","weight":0.017},{"ticker":"BRK.B","weight":0.015}
+    ]},
+    "XLK": {"benchmark":"Technology Select Sector","holdings":[
+      {"ticker":"NVDA","weight":0.178},{"ticker":"MSFT","weight":0.151},{"ticker":"AAPL","weight":0.145},{"ticker":"AVGO","weight":0.083},{"ticker":"ORCL","weight":0.039},{"ticker":"PLTR","weight":0.028},{"ticker":"CRM","weight":0.025},{"ticker":"AMD","weight":0.024},{"ticker":"IBM","weight":0.019},{"ticker":"CSCO","weight":0.018}
+    ]},
+    "VGT": {"benchmark":"MSCI US IMI Information Technology 25/50","holdings":[
+      {"ticker":"NVDA","weight":0.166},{"ticker":"MSFT","weight":0.140},{"ticker":"AAPL","weight":0.132},{"ticker":"AVGO","weight":0.077},{"ticker":"ORCL","weight":0.034},{"ticker":"PLTR","weight":0.026},{"ticker":"AMD","weight":0.023},{"ticker":"CRM","weight":0.022},{"ticker":"CSCO","weight":0.018},{"ticker":"IBM","weight":0.017}
+    ]},
+    "XLV": {"benchmark":"Health Care Select Sector","holdings":[
+      {"ticker":"LLY","weight":0.132},{"ticker":"JNJ","weight":0.089},{"ticker":"ABBV","weight":0.076},{"ticker":"UNH","weight":0.063},{"ticker":"MRK","weight":0.052},{"ticker":"TMO","weight":0.041},{"ticker":"ABT","weight":0.038},{"ticker":"ISRG","weight":0.032},{"ticker":"AMGN","weight":0.031},{"ticker":"GILD","weight":0.029}
+    ]},
+    "XLF": {"benchmark":"Financial Select Sector","holdings":[
+      {"ticker":"BRK.B","weight":0.132},{"ticker":"JPM","weight":0.108},{"ticker":"V","weight":0.074},{"ticker":"MA","weight":0.061},{"ticker":"BAC","weight":0.046},{"ticker":"WFC","weight":0.036},{"ticker":"GS","weight":0.031},{"ticker":"AXP","weight":0.029},{"ticker":"MS","weight":0.025},{"ticker":"SPGI","weight":0.024}
+    ]},
+    "XLP": {"benchmark":"Consumer Staples Select Sector","holdings":[
+      {"ticker":"WMT","weight":0.105},{"ticker":"COST","weight":0.091},{"ticker":"PG","weight":0.087},{"ticker":"KO","weight":0.063},{"ticker":"PM","weight":0.058},{"ticker":"PEP","weight":0.052},{"ticker":"MDLZ","weight":0.041},{"ticker":"CL","weight":0.034},{"ticker":"MO","weight":0.032},{"ticker":"TGT","weight":0.024}
+    ]},
+    "XLI": {"benchmark":"Industrial Select Sector","holdings":[
+      {"ticker":"GE","weight":0.061},{"ticker":"RTX","weight":0.055},{"ticker":"UBER","weight":0.047},{"ticker":"CAT","weight":0.044},{"ticker":"UNP","weight":0.038},{"ticker":"HON","weight":0.036},{"ticker":"BA","weight":0.034},{"ticker":"ETN","weight":0.032},{"ticker":"DE","weight":0.029},{"ticker":"ADP","weight":0.028}
+    ]},
+    "XLE": {"benchmark":"Energy Select Sector","holdings":[
+      {"ticker":"XOM","weight":0.235},{"ticker":"CVX","weight":0.175},{"ticker":"COP","weight":0.074},{"ticker":"WMB","weight":0.052},{"ticker":"EOG","weight":0.047},{"ticker":"SLB","weight":0.043},{"ticker":"KMI","weight":0.041},{"ticker":"MPC","weight":0.039},{"ticker":"PSX","weight":0.032},{"ticker":"OKE","weight":0.030}
+    ]},
+    "VNQ": {"benchmark":"MSCI US Investable Market Real Estate 25/50","holdings":[
+      {"ticker":"PLD","weight":0.083},{"ticker":"AMT","weight":0.058},{"ticker":"EQIX","weight":0.056},{"ticker":"WELL","weight":0.052},{"ticker":"SPG","weight":0.042},{"ticker":"DLR","weight":0.040},{"ticker":"O","weight":0.039},{"ticker":"PSA","weight":0.035},{"ticker":"CCI","weight":0.028},{"ticker":"VICI","weight":0.027}
+    ]},
+    "IWM": {"benchmark":"Russell 2000","holdings":[
+      {"ticker":"INSM","weight":0.008},{"ticker":"CRDO","weight":0.007},{"ticker":"FN","weight":0.006},{"ticker":"HIMS","weight":0.006},{"ticker":"KTOS","weight":0.005},{"ticker":"RKLB","weight":0.005},{"ticker":"RGTI","weight":0.004},{"ticker":"LUMN","weight":0.004},{"ticker":"IONQ","weight":0.004},{"ticker":"ASTS","weight":0.004}
+    ]},
+    "VB": {"benchmark":"CRSP US Small Cap","holdings":[
+      {"ticker":"COHR","weight":0.006},{"ticker":"WSM","weight":0.006},{"ticker":"ATO","weight":0.005},{"ticker":"EME","weight":0.005},{"ticker":"PSTG","weight":0.005},{"ticker":"NTRA","weight":0.004},{"ticker":"CHWY","weight":0.004},{"ticker":"DTM","weight":0.004},{"ticker":"TOL","weight":0.004},{"ticker":"BURL","weight":0.004}
+    ]}
+  }
+}

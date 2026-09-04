@@ -2,6 +2,7 @@ import os, asyncio
 import httpx
 from dotenv import load_dotenv
 from .cache import cache
+from .etf_holdings_store import get_etf_holdings
 
 load_dotenv()
 BASE="https://financialmodelingprep.com/stable"
@@ -75,4 +76,14 @@ async def etf_info(symbol:str):
     return await get("etf/info",ttl=TTL_ETF,symbol=symbol.upper())
 
 async def etf_holdings(symbol:str):
-    return await get("etf/holdings",ttl=TTL_ETF,symbol=symbol.upper())
+    """Return PortfolioPath's monthly local ETF holdings snapshot.
+
+    Live FMP ETF holdings are intentionally not used by default because the
+    endpoint may require a premium entitlement. This keeps the educational
+    overlap tool deterministic and independent of a per-request paid API.
+    """
+    local = get_etf_holdings(symbol)
+    if local is not None:
+        return local
+    return {"symbol": symbol.upper(), "holdings": [], "snapshot_date": None, "source": "PortfolioPath monthly ETF holdings snapshot", "unavailable": True}
+

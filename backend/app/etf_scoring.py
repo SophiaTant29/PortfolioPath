@@ -204,7 +204,7 @@ def overlap_between(holdings_a,holdings_b):
     coverage_a=sum(a.values()); coverage_b=sum(b.values())
     warning=None
     if not a or not b: warning="One or both ETF holding datasets were empty or unavailable."
-    elif coverage_a<0.5 or coverage_b<0.5: warning="The provider returned only partial holdings data, so overlap is a lower-bound estimate."
+    elif coverage_a<0.5 or coverage_b<0.5: warning="The monthly snapshot contains only part of one or both funds, so this is a minimum observed overlap rather than total fund overlap."
     return {
         "overlap_pct":round(overlap*100,2),
         "common_holdings":len(common),
