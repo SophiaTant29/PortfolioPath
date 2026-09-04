@@ -154,24 +154,43 @@ def overlap_between(holdings_a,holdings_b):
     def normalize_rows(payload):
         if isinstance(payload,list): return payload
         if isinstance(payload,dict):
-            for key in ("holdings","data","portfolioHoldings","results"):
+            for key in ("holdings","data","portfolioHoldings","results","etfHoldings","constituents"):
                 value=payload.get(key)
                 if isinstance(value,list): return value
-            # Some providers return ticker-keyed holding objects.
+                if isinstance(value,dict):
+                    nested=[v for v in value.values() if isinstance(v,dict)]
+                    if nested:return nested
             vals=[v for v in payload.values() if isinstance(v,dict)]
-            if vals: return vals
+            if vals:return vals
         return []
+
+    def parse_weight(v):
+        if v is None:return None
+        if isinstance(v,str):
+            text=v.strip().replace(",","")
+            is_pct=text.endswith("%")
+            text=text.rstrip("%")
+            try:w=float(text)
+            except:return None
+            if is_pct:return w/100
+        else:
+            try:w=float(v)
+            except:return None
+        if w>1:w=w/100
+        return w if 0<=w<=1 else None
 
     def map_holdings(rows):
         out={}
         for h in normalize_rows(rows):
-            if not isinstance(h,dict): continue
-            ticker=str(h.get("asset") or h.get("symbol") or h.get("ticker") or h.get("name") or "").upper().strip()
-            if not ticker: continue
-            w=safe(h.get("weightPercentage",h.get("weight",h.get("percentage",h.get("portfolioWeight")))))
-            if w is None: continue
-            if w>1:w=w/100
-            if w<0: continue
+            if not isinstance(h,dict):continue
+            ticker=str(h.get("asset") or h.get("symbol") or h.get("ticker") or h.get("holdingSymbol") or h.get("name") or "").upper().strip()
+            if not ticker:continue
+            raw=None
+            for key in ("weightPercentage","weight","percentage","portfolioWeight","weighting","percentOfFund","holdingPercent","allocation"):
+                if key in h and h.get(key) is not None:
+                    raw=h.get(key);break
+            w=parse_weight(raw)
+            if w is None:continue
             out[ticker]=max(out.get(ticker,0),w)
         return out
 
@@ -182,11 +201,17 @@ def overlap_between(holdings_a,holdings_b):
         [{"ticker":t,"weight_a":a[t],"weight_b":b[t],"shared_weight":min(a[t],b[t])} for t in common],
         key=lambda x:x["shared_weight"],reverse=True
     )[:10]
+    coverage_a=sum(a.values()); coverage_b=sum(b.values())
+    warning=None
+    if not a or not b: warning="One or both ETF holding datasets were empty or unavailable."
+    elif coverage_a<0.5 or coverage_b<0.5: warning="The provider returned only partial holdings data, so overlap is a lower-bound estimate."
     return {
         "overlap_pct":round(overlap*100,2),
         "common_holdings":len(common),
         "top_common":top,
         "holdings_a_count":len(a),
         "holdings_b_count":len(b),
-        "warning":"One or both ETF holding datasets were empty." if not a or not b else None
+        "coverage_a_pct":round(coverage_a*100,1),
+        "coverage_b_pct":round(coverage_b*100,1),
+        "warning":warning
     }

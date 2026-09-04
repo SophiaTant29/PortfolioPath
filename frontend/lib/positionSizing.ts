@@ -15,6 +15,8 @@ export function suggestedHoldingCount(totalInvestment:number|undefined, category
     return {min:1,max:2};
   }
 
+  if(total<250)return {min:1,max:1};
+  if(total<1000)return {min:1,max:2};
   if(categoryDollars<750)return {min:1,max:1};
   if(categoryDollars<2000)return {min:1,max:2};
   if(categoryDollars<5000)return {min:2,max:3};

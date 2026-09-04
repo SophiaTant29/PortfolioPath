@@ -28,7 +28,14 @@ export default async function DashboardPage() {
         <p>Signed in as {user.email}</p>
         <div className="actions">
           <Link className="btn btnPrimary" href="/portfolios/new">Create Portfolio</Link>
+          <Link className="btn btnSecondary" href="/learn">Learn Investing Basics</Link>
         </div>
+      </section>
+      <section className="panel" style={{marginTop:16,borderWidth:2}}>
+        <p className="sectionEyebrow">New to investing?</p>
+        <h2>Learn the terms before the questionnaire</h2>
+        <p>The questionnaire uses terms such as volatility, dividends, ETFs, time horizon, and diversification. The Learning Center explains them in plain English and stays available while you build.</p>
+        <Link className="btn btnPrimary" href="/learn">Open Learning Center</Link>
       </section>
 
       <section style={{marginTop:16}} className="grid">

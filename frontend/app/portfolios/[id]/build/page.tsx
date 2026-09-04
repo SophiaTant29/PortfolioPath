@@ -10,6 +10,7 @@ import { allocationExplanation } from "@/lib/allocationExplanations";
 import CategoryCompletionReview from "@/components/CategoryCompletionReview";
 import { suggestedHoldingCount, equalWeightSuggestion, positionSizingExplanation } from "@/lib/positionSizing";
 import InvestmentResearchResources from "@/components/InvestmentResearchResources";
+import { simplifyAllocationForAmount, complexityExplanation, portfolioComplexityPlan } from "@/lib/portfolioComplexity";
 
 type Allocation={name:string;pct:number;dollars:number};
 type Selection={ticker:string;name:string;category:string;amount:number;type:string};
@@ -61,9 +62,14 @@ export default function PortfolioBuilder(){
     setLoading(false);
   })()},[params.id,router]);
 
-  const allocation:Allocation[]=useMemo(
+  const fullAllocation:Allocation[]=useMemo(
     ()=>[...(portfolio?.risk_profile?.allocation ?? [])].sort((a:any,b:any)=>Number(b.pct)-Number(a.pct)),
     [portfolio]
+  );
+  const amountForComplexity=Number(portfolio?.risk_profile?.plannedInvestment ?? portfolio?.risk_profile?.answers?.amount ?? 0);
+  const allocation:Allocation[]=useMemo(
+    ()=>simplifyAllocationForAmount(fullAllocation,amountForComplexity,portfolio?.risk_profile?.answers?.approach),
+    [fullAllocation,amountForComplexity,portfolio]
   );
   const idx=Math.max(0,Math.min(Math.max(0,allocation.length-1),Number(search.get("step")??0)));
   const current=allocation[idx];
@@ -76,6 +82,7 @@ export default function PortfolioBuilder(){
   const holdingGuide=suggestedHoldingCount(plannedInvestment || undefined,Number(current?.pct??0),portfolio?.risk_profile?.answers?.approach);
   const holdingGuideText=positionSizingExplanation(plannedInvestment || undefined,Number(current?.pct??0),holdingGuide,portfolio?.risk_profile?.answers?.approach);
   const allocationWhy=allocationExplanation(current?.name??"",Number(current?.pct??0),portfolio?.risk_profile);
+  const complexityPlan=portfolioComplexityPlan(plannedInvestment,portfolio?.risk_profile?.answers?.approach);
 
   const options=useMemo(()=>{
     if(!current)return [];
@@ -163,6 +170,13 @@ export default function PortfolioBuilder(){
           <div className="card"><span className="muted">Suggested holdings</span><div className="kpi">{holdingGuide.min}{holdingGuide.max!==holdingGuide.min?`–${holdingGuide.max}`:""}</div></div>
           <div className="card"><span className="muted">Research options</span><div className="kpi">{securityUniverse.filter(s=>s.category===current.name).length}</div></div>
         </div>
+      </section>
+
+      <section className="panel" style={{marginTop:16}}>
+        <p className="sectionEyebrow">Portfolio complexity</p>
+        <h2>{complexityPlan.label}: about {complexityPlan.totalHoldings.min}–{complexityPlan.totalHoldings.max} total holdings</h2>
+        <p>{complexityExplanation(plannedInvestment,fullAllocation,allocation)}</p>
+        {plannedInvestment>0 && plannedInvestment<1000 && <p className="helpText">At smaller amounts, PortfolioPath emphasizes broader diversified funds and fewer separately represented categories so the learning portfolio does not become a collection of tiny positions.</p>}
       </section>
 
       <section className="panel" style={{marginTop:16}}>

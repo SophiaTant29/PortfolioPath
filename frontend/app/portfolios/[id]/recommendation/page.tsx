@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { profileDescriptions } from "@/lib/investorProfile";
 import { allocationExplanation } from "@/lib/allocationExplanations";
+import { simplifyAllocationForAmount, complexityExplanation, portfolioComplexityPlan } from "@/lib/portfolioComplexity";
 
 export default async function RecommendationPage({params}:{params:Promise<{id:string}>}){
   const {id}=await params;
@@ -11,8 +12,10 @@ export default async function RecommendationPage({params}:{params:Promise<{id:st
   if(!portfolio)return <section className="panel"><h1>Portfolio not found</h1></section>;
   if(!rp)return <section className="panel"><h1>Investor profile not completed</h1><Link className="btn btnPrimary" href={`/portfolios/${id}/questionnaire`}>Start Questionnaire</Link></section>;
 
-  const allocation=rp.allocation??[];
+  const fullAllocation=rp.allocation??[];
   const amount=Number(rp.answers?.amount??0);
+  const allocation=simplifyAllocationForAmount(fullAllocation,amount,rp.answers?.approach);
+  const complexity=portfolioComplexityPlan(amount,rp.answers?.approach);
   return <>
     <section className="panel">
       <p className="sectionEyebrow">Your educational investor profile</p>
@@ -28,6 +31,7 @@ export default async function RecommendationPage({params}:{params:Promise<{id:st
       <p className="sectionEyebrow">Educational model allocation</p>
       <h2>{amount>0?`Example using $${amount.toLocaleString()}`:"Percentage model"}</h2>
       <p className="educationalNotice">This allocation is a learning example generated from your questionnaire. It is not a recommendation to buy, sell, or hold any investment.</p>
+      <div className="card" style={{marginBottom:12}}><strong>{complexity.label}</strong><p className="helpText">{complexityExplanation(amount,fullAllocation,allocation)}</p></div>
       <div style={{display:"grid",gap:10}}>{allocation.map((a:any)=>{const why=allocationExplanation(a.name,Number(a.pct),rp);return <div key={a.name} className="card">
         <div style={{display:"flex",justifyContent:"space-between",gap:12,flexWrap:"wrap"}}><strong>{a.name}</strong><span><strong>{Number(a.pct).toFixed(1)}%</strong>{amount>0?` • $${Number(a.dollars).toLocaleString(undefined,{maximumFractionDigits:0})}`:""}</span></div>
         <p className="helpText"><strong>Why am I seeing this?</strong> {why.headline}</p>

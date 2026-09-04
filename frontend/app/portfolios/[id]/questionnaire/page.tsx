@@ -77,7 +77,9 @@ export default function QuestionnairePage(){
       <section className="panel" style={{marginBottom:16}}>
         <p className="muted">Investor Profile</p>
         <h1>Build your educational model portfolio</h1>
-        <p>These questions help PortfolioPath estimate how much investment risk fits your goals and financial flexibility.</p><p className="helpText">All 15 questions are required. You can edit your answers later.</p>
+        <p>These questions help PortfolioPath create an educational model based on risk comfort, time horizon, and financial flexibility.</p>
+        <p className="helpText">All 15 questions are required. You can edit your answers later.</p>
+        <div className="actions"><a className="btn btnSecondary" href="/learn" target="_blank" rel="noreferrer">New to these terms? Open Learn Center</a></div>
       </section>
 
       <Field n={1} title="How much are you planning to invest?">
@@ -153,7 +155,7 @@ export default function QuestionnairePage(){
         </select>
       </Field>
 
-      <Field n={11} title="Which type of investment is most appealing to you?">
+      <Field n={11} title="Which type of investment is most appealing to you?" help="Dividend-paying stocks or funds distribute part of their earnings or cash flow to shareholders, usually as periodic cash payments. Dividends are not guaranteed, and a dividend-paying investment can still lose value.">
         <select className="field" value={a.appeal} onChange={e=>set("appeal",e.target.value as QuestionnaireAnswers["appeal"])}>
           <option value="growth">Companies with strong growth potential</option><option value="large">Large, established companies</option>
           <option value="dividend">Dividend-paying investments</option><option value="mix">A diversified mix</option><option value="unsure">I am unsure</option>
@@ -181,7 +183,7 @@ export default function QuestionnairePage(){
         </select>
       </Field>
 
-      <Field n={15} title="How important are dividends to your investment strategy?" help="A dividend is a cash payment some companies or funds make to shareholders.">
+      <Field n={15} title="How important are dividends to your investment strategy?" help="A dividend is a cash payment some companies or funds distribute to shareholders. Dividend-producing investments are often associated with income, but payments can be reduced or stopped and a high dividend does not automatically mean an investment is safer or better.">
         <select className="field" value={a.dividendImportance} onChange={e=>set("dividendImportance",e.target.value as QuestionnaireAnswers["dividendImportance"])}>
           <option value="none">Not important</option><option value="slight">Slightly important</option>
           <option value="moderate">Moderately important</option><option value="very">Very important</option><option value="unsure">I am unsure</option>
@@ -202,7 +204,7 @@ export default function QuestionnairePage(){
           <div><span className="muted">Risk capacity</span><div className="kpi">{result.riskCapacity}/100</div></div>
         </div>
         <div className="actions">
-          <button className="btn btnPrimary" type="submit">Save & View Recommendation</button>
+          <button className="btn btnPrimary" type="submit">Save & View Model Allocation</button>
         </div>
         {message&&<p>{message}</p>}
       </section>
