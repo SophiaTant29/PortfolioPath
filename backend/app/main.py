@@ -1,7 +1,8 @@
-import asyncio, os
-from fastapi import FastAPI, HTTPException
+import asyncio, os, secrets
+from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from . import market_data
 from .analytics import build_daily_backtest
 from .review_engine import extract_fundamental_trend, review_holding
@@ -11,7 +12,7 @@ from .etf_scoring import build_etf_score, overlap_between
 from .holding_performance import holding_return_from_transactions
 from .etf_holdings_store import snapshot_metadata
 
-app=FastAPI(title="PortfolioPath Analytics API",version="0.2.0")
+app=FastAPI(title="PortfolioPath Analytics API",version="1.0.0")
 
 frontend_origin=os.getenv("FRONTEND_ORIGIN","http://localhost:3000").rstrip("/")
 allowed_origins=list(dict.fromkeys(["http://localhost:3000","http://127.0.0.1:3000",frontend_origin]))
@@ -31,13 +32,32 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.middleware("http")
+async def protect_analytics_api(request:Request, call_next):
+    """Require a server-to-server secret for analytics routes in production.
+
+    Browsers call the authenticated Next.js proxy; the shared secret never ships to clients.
+    Health remains public for hosting checks.
+    """
+    if request.url.path.startswith("/api/"):
+        expected=os.getenv("BACKEND_SHARED_SECRET","")
+        app_env=os.getenv("APP_ENV","development").lower()
+        # Demo deployments remain usable without an extra shared secret.
+        # For a true public launch, set BACKEND_SHARED_SECRET on both Render and Vercel;
+        # once configured, every /api/* request is protected automatically.
+        if expected:
+            provided=request.headers.get("x-portfoliopath-backend-key","")
+            if not secrets.compare_digest(provided,expected):
+                return JSONResponse({"detail":"Unauthorized."},status_code=401)
+    return await call_next(request)
+
 @app.get("/health")
 def health():
     return {
         "status":"ok",
         "market_data_configured": bool(os.getenv("FMP_API_KEY")),
         "service":"PortfolioPath Analytics API",
-        "version":"0.12.0",
+        "version":"1.0.0",
     }
 
 @app.get("/api/security/{symbol}")
@@ -323,7 +343,7 @@ async def etf_overlap(req:ETFOverlapRequest):
             continue
         rows=(result or {}).get("holdings",[]) if isinstance(result,dict) else result
         if not rows:
-            errors[symbol]="Not yet included in the current monthly ETF holdings snapshot."
+            errors[symbol]=(result or {}).get("fallback_error") or "ETF holdings data is temporarily unavailable for this fund."
             continue
         holdings_by_symbol[symbol]=result
     pairwise=[]
@@ -343,6 +363,7 @@ async def etf_overlap(req:ETFOverlapRequest):
         "snapshot_date":meta.get("snapshot_date"),
         "coverage_note":meta.get("coverage_note"),
         "supported_symbols":meta.get("supported_symbols",[]),
+        "sources":{s:(holdings_by_symbol.get(s) or {}).get("source") for s in symbols if s in holdings_by_symbol},
     }
 
 

@@ -31,10 +31,10 @@ export function equalWeightSuggestion(categoryAmount:number, count:number) {
 
 export function positionSizingExplanation(total:number|undefined, categoryPct:number, count:{min:number;max:number}, preference?:string) {
   if(preference==="funds"){
-    return `Because diversified funds can already hold many securities, PortfolioPath suggests about ${count.min}${count.max!==count.min?`–${count.max}`:""} fund${count.max>1?"s":""} in this category.`;
+    return `Because diversified funds can already hold many securities, This learning structure uses about ${count.min}${count.max!==count.min?`–${count.max}`:""} fund${count.max>1?"s":""} in this category.`;
   }
   if(!total){
-    return `Without a dollar amount, PortfolioPath suggests about ${count.min}${count.max!==count.min?`–${count.max}`:""} holding${count.max>1?"s":""} for this ${Number(categoryPct).toFixed(1)}% category.`;
+    return `Without a dollar amount, This learning structure uses about ${count.min}${count.max!==count.min?`–${count.max}`:""} holding${count.max>1?"s":""} for this ${Number(categoryPct).toFixed(1)}% category.`;
   }
-  return `Based on your planned investment and this category's size, PortfolioPath suggests about ${count.min}${count.max!==count.min?`–${count.max}`:""} holding${count.max>1?"s":""}. This is a diversification guideline, not a requirement.`;
+  return `Based on your planned investment and this category's size, This learning structure uses about ${count.min}${count.max!==count.min?`–${count.max}`:""} holding${count.max>1?"s":""}. This is a diversification guideline, not a requirement.`;
 }

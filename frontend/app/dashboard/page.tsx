@@ -27,7 +27,7 @@ export default async function DashboardPage() {
         <h1>My Portfolios</h1>
         <p>Signed in as {user.email}</p>
         <div className="actions">
-          <Link className="btn btnPrimary" href="/portfolios/new">Create Portfolio</Link>
+          <Link className="btn btnPrimary" href="/portfolios/new">Create Learning Portfolio</Link>
           <Link className="btn btnSecondary" href="/learn">Learn Investing Basics</Link>
         </div>
       </section>

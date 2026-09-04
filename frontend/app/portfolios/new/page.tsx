@@ -29,7 +29,7 @@ export default function NewPortfolioPage(){
       <form onSubmit={submit}>
         <label className="field">Portfolio name<input value={name} onChange={e=>setName(e.target.value)} required /></label>
         <label className="field">Start date<input type="date" value={startDate} onChange={e=>setStartDate(e.target.value)} required /></label>
-        <button className="btn btnPrimary">Create Portfolio</button>
+        <button className="btn btnPrimary">Create Learning Portfolio</button>
       </form>
       {message&&<p>{message}</p>}
     </section>

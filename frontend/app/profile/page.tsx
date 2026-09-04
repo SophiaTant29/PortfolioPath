@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import ProfilePreferences from "@/components/ProfilePreferences";
+import DeleteAccountButton from "@/components/DeleteAccountButton";
 
 export default async function ProfilePage(){
   const supabase=await createClient();
@@ -29,10 +30,11 @@ export default async function ProfilePage(){
       <h2>Your learning portfolios</h2>
       {(portfolios??[]).length===0?<p className="muted">No learning portfolios yet.</p>:(portfolios??[]).slice(0,6).map((p:any)=><div className="card" key={p.id} style={{marginBottom:10}}><strong>{p.name}</strong><p className="muted">{p.risk_profile?.profileName??"Questionnaire not completed"}</p><Link className="btn btnSecondary" href={`/portfolios/${p.id}`}>Open</Link></div>)}
       <div className="actions">
-        <Link className="btn btnPrimary" href="/portfolios/new">Create Portfolio</Link>
+        <Link className="btn btnPrimary" href="/portfolios/new">Create Learning Portfolio</Link>
         {latest&&<Link className="btn btnSecondary" href={`/portfolios/${latest.id}/questionnaire`}>Retake / Edit Questionnaire</Link>}
         <Link className="btn btnSecondary" href="/logout">Sign Out</Link>
       </div>
+      <div style={{marginTop:18,paddingTop:16,borderTop:"1px solid var(--line)"}}><h3>Account controls</h3><DeleteAccountButton/></div>
     </section>
   </>;
 }

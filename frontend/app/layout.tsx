@@ -2,7 +2,7 @@ import "./globals.css";
 
 export const metadata = {
   title: "PortfolioPath",
-  description: "Guided investing education, portfolio construction, and research."
+  description: "Guided investing education, portfolio simulation, and beginner-friendly research."
 };
 
 export default function RootLayout({children}:{children:React.ReactNode}) {
@@ -27,7 +27,6 @@ export default function RootLayout({children}:{children:React.ReactNode}) {
               <a href="/disclosures">Disclosures</a>
               <a href="/privacy">Privacy</a>
               <a href="/terms">Terms</a>
-              <a href="/logout">Sign out</a>
             </div>
           </footer>
         </main>

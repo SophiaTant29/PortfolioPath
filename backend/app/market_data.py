@@ -3,6 +3,7 @@ import httpx
 from dotenv import load_dotenv
 from .cache import cache
 from .etf_holdings_store import get_etf_holdings
+from .yahoo_fund_holdings import fetch_top_holdings
 
 load_dotenv()
 BASE="https://financialmodelingprep.com/stable"
@@ -76,14 +77,31 @@ async def etf_info(symbol:str):
     return await get("etf/info",ttl=TTL_ETF,symbol=symbol.upper())
 
 async def etf_holdings(symbol:str):
-    """Return PortfolioPath's monthly local ETF holdings snapshot.
+    """Return ETF holdings from the checked-in monthly snapshot, with a cached fallback.
 
-    Live FMP ETF holdings are intentionally not used by default because the
-    endpoint may require a premium entitlement. This keeps the educational
-    overlap tool deterministic and independent of a per-request paid API.
+    The local snapshot is preferred. If a PortfolioPath-selectable ETF is not
+    present, use yfinance's top-holdings data as a best-effort fallback and cache
+    that result for 30 days. FMP's premium ETF-holdings endpoint is not used.
     """
-    local = get_etf_holdings(symbol)
+    ticker=symbol.upper().strip()
+    local=get_etf_holdings(ticker)
     if local is not None:
         return local
-    return {"symbol": symbol.upper(), "holdings": [], "snapshot_date": None, "source": "PortfolioPath monthly ETF holdings snapshot", "unavailable": True}
+    cache_key=("etf-holdings-fallback",ticker)
+    cached=cache.get(cache_key)
+    if cached is not None:
+        return cached
+    try:
+        result=await asyncio.to_thread(fetch_top_holdings,ticker)
+        cache.set(cache_key,result,TTL_ETF)
+        return result
+    except Exception as e:
+        return {
+            "symbol": ticker,
+            "holdings": [],
+            "snapshot_date": None,
+            "source": "PortfolioPath ETF holdings fallback",
+            "unavailable": True,
+            "fallback_error": str(e),
+        }
 

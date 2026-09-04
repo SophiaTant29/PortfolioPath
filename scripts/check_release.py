@@ -16,7 +16,8 @@ required=[
     ROOT/"supabase/migrations/20260825050000_initial_schema.sql",
     ROOT/"supabase/migrations/20260825050500_v17_integration_hardening.sql",
     ROOT/"DEPLOYMENT.md",
-    ROOT/"ALPHA_CHECKLIST.md",
+    ROOT/"LAUNCH_READY_DEMO.md",
+    ROOT/"PUBLIC_LAUNCH_CHECKLIST.md",
 ]
 
 for p in required:
@@ -26,7 +27,7 @@ for p in required:
 frontend_env=(ROOT/"frontend/.env.production.example").read_text() if (ROOT/"frontend/.env.production.example").exists() else ""
 backend_env=(ROOT/"backend/.env.production.example").read_text() if (ROOT/"backend/.env.production.example").exists() else ""
 
-for key in ["NEXT_PUBLIC_SUPABASE_URL","NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY","NEXT_PUBLIC_API_BASE_URL","SUPABASE_SERVICE_ROLE_KEY"]:
+for key in ["NEXT_PUBLIC_SUPABASE_URL","NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY","API_BASE_URL","SUPABASE_SERVICE_ROLE_KEY"]:
     if key not in frontend_env:
         errors.append(f"Frontend production env template missing {key}")
 

@@ -6,8 +6,6 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { securityUniverse } from "@/lib/securityUniverse";
 
-const API=process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000";
-
 type HoldingReview={ticker:string;name:string;category:string;amount:number;status:string;weight:number;positives:string[];concerns:string[];fundamentals?:any;alternatives:any[]};
 
 function fitScore(s:any,rp:any){
@@ -54,7 +52,7 @@ export default function ReviewPage(){
     for(const h of selections){
       const meta=securityUniverse.find(s=>s.ticker===h.symbol&&s.category===h.category) ?? securityUniverse.find(s=>s.ticker===h.symbol);
       try{
-        const r=await fetch(`${API}/api/analytics/review-holding`,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({
+        const r=await fetch(`/api/backend/api/analytics/review-holding`,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({
           ticker:h.symbol,amount:Number(h.planned_amount),portfolio_total:total,holding_return:0,benchmark_return:0,holding_risk:Number(meta?.risk??55),investor_risk:investorRisk,portfolio_excess:null,max_drawdown:null
         })});
         if(!r.ok)throw new Error();
@@ -78,7 +76,7 @@ export default function ReviewPage(){
   return <>
     <section className="panel">
       <p className="muted">Portfolio Review</p><h1>{portfolio.name}</h1>
-      <p>Study concentration, risk fit, and company fundamentals without turning the review into a trading recommendation.</p><p className="educationalNotice">Review labels describe research attention only. They are not buy, sell, hold, or replacement recommendations.</p>
+      <p>Study concentration, risk-profile comparison, and company fundamentals without turning the review into a trading recommendation.</p><p className="educationalNotice">Review labels describe research attention only. They are not buy, sell, hold, or replacement recommendations.</p>
       <p className="helpText">Fundamental information is intended to refresh on a monthly cadence and may be up to 30 days old.</p>
       <div className="grid"><div className="card"><span className="muted">No major research flag</span><div className="kpi">{counts.Steady}</div></div><div className="card"><span className="muted">Review flags</span><div className="kpi">{counts.Review}</div></div><div className="card"><span className="muted">Deeper research flags</span><div className="kpi">{counts.DeepDive}</div></div></div>
       <div className="actions"><button className="btn btnPrimary" onClick={runReviews}>Run Portfolio Review</button></div>{message&&<p>{message}</p>}

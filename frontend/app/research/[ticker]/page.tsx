@@ -3,11 +3,11 @@ import { createClient } from "@/lib/supabase/server";
 import { securityUniverse } from "@/lib/securityUniverse";
 import { guidanceFor, researchResources } from "@/lib/researchGuidance";
 
-const API=process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000";
+import { backendFetch } from "@/lib/backend";
 
 async function getResearch(ticker:string){
   try{
-    const r=await fetch(`${API}/api/security/${encodeURIComponent(ticker)}`,{next:{revalidate:2592000}});
+    const r=await backendFetch(`/api/security/${encodeURIComponent(ticker)}`,{next:{revalidate:2592000}} as any);
     if(!r.ok)return null;
     return await r.json();
   }catch{return null;}

@@ -38,22 +38,22 @@ export function compareScoreSnapshots(
     const d=matchNow-matchOld;
     if(d<=-10)out.push({
       severity:"Important",
-      title:`${current.symbol} Match Score fell`,
-      body:`Match decreased ${Math.abs(d).toFixed(0)} points, from ${matchOld.toFixed(0)}% to ${matchNow.toFixed(0)}%.`,
+      title:`${current.symbol} Research Relevance score fell`,
+      body:`Research Relevance decreased ${Math.abs(d).toFixed(0)} points, from ${matchOld.toFixed(0)}% to ${matchNow.toFixed(0)}%.`,
       symbol:current.symbol,
       href:portfolioId?`/research/${current.symbol}?portfolio=${portfolioId}`:undefined
     });
     else if(d<=-5)out.push({
       severity:"Consider",
-      title:`${current.symbol} Match Score weakened`,
-      body:`Match decreased ${Math.abs(d).toFixed(0)} points since the prior snapshot.`,
+      title:`${current.symbol} Research Relevance score weakened`,
+      body:`Research Relevance decreased ${Math.abs(d).toFixed(0)} points since the prior snapshot.`,
       symbol:current.symbol,
       href:portfolioId?`/research/${current.symbol}?portfolio=${portfolioId}`:undefined
     });
     else if(d>=8)out.push({
       severity:"Info",
-      title:`${current.symbol} Match Score improved`,
-      body:`Match increased ${d.toFixed(0)} points since the prior snapshot.`,
+      title:`${current.symbol} Research Relevance score improved`,
+      body:`Research Relevance increased ${d.toFixed(0)} points since the prior snapshot.`,
       symbol:current.symbol,
       href:portfolioId?`/research/${current.symbol}?portfolio=${portfolioId}`:undefined
     });

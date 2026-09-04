@@ -56,5 +56,5 @@ export function complexityExplanation(amount:number, allocation:AllocationItem[]
   const plan=portfolioComplexityPlan(amount);
   if(!amount || amount>=10000) return `PortfolioPath is showing the full educational category model. The suggested total learning structure is about ${plan.totalHoldings.min}–${plan.totalHoldings.max} holdings.`;
   const reduced=Math.max(0,(allocation?.length||0)-(simplified?.length||0));
-  return `${plan.label}: at $${Number(amount).toLocaleString()}, PortfolioPath suggests about ${plan.totalHoldings.min}–${plan.totalHoldings.max} total holdings. ${reduced?`${reduced} smaller category ${reduced===1?"slice has":"slices have"} been folded into broader categories so you do not end up with many tiny positions.`:"The model already fits this complexity range."} This is an educational simplification, not a recommendation.`;
+  return `${plan.label}: at $${Number(amount).toLocaleString()}, this learning structure uses about ${plan.totalHoldings.min}–${plan.totalHoldings.max} total holdings. ${reduced?`${reduced} smaller category ${reduced===1?"slice has":"slices have"} been folded into broader categories so you do not end up with many tiny positions.`:"The model already fits this complexity range."} This is an educational simplification, not a recommendation.`;
 }

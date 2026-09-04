@@ -46,7 +46,7 @@ export default function PortfolioBuilder(){
   const [message,setMessage]=useState("");
   const [expanded,setExpanded]=useState(false);
   const [showCompletion,setShowCompletion]=useState(false);
-  const [browseMode,setBrowseMode]=useState<"Best fit"|"Good for beginners"|"More diversified"|"Lower volatility"|"Higher quality"|"Growth focused"|"Dividend focused"|"ETFs only"|"Individual stocks">("Best fit");
+  const [browseMode,setBrowseMode]=useState<"Research relevance"|"Lower complexity"|"More diversified"|"Lower volatility"|"Higher quality"|"Growth focused"|"Dividend focused"|"ETFs only"|"Individual stocks">("Research relevance");
   const [amountDrafts,setAmountDrafts]=useState<Record<string,string>>({});
 
   useEffect(()=>{(async()=>{
@@ -91,11 +91,11 @@ export default function PortfolioBuilder(){
       .filter(s=>typeFilter==="All"||s.type===typeFilter)
       .filter(s=>`${s.ticker} ${s.name}`.toLowerCase().includes(searchText.toLowerCase()))
       .map(s=>({...s,match:fitScore(s,portfolio?.risk_profile)}));
-    if(browseMode==="Good for beginners"||browseMode==="More diversified"||browseMode==="ETFs only")rows=rows.filter(s=>s.type==="ETF");
+    if(browseMode==="Lower complexity"||browseMode==="More diversified"||browseMode==="ETFs only")rows=rows.filter(s=>s.type==="ETF");
     if(browseMode==="Individual stocks")rows=rows.filter(s=>s.type==="Stock");
     const sorters:Record<string,(a:any,b:any)=>number>={
-      "Best fit":(a,b)=>b.match-a.match,
-      "Good for beginners":(a,b)=>a.risk-b.risk||b.stability-a.stability||b.match-a.match,
+      "Research relevance":(a,b)=>b.match-a.match,
+      "Lower complexity":(a,b)=>a.risk-b.risk||b.stability-a.stability||b.match-a.match,
       "More diversified":(a,b)=>b.stability-a.stability||a.risk-b.risk||b.match-a.match,
       "Lower volatility":(a,b)=>a.risk-b.risk||b.stability-a.stability,
       "Higher quality":(a,b)=>b.quality-a.quality||b.match-a.match,
@@ -107,7 +107,7 @@ export default function PortfolioBuilder(){
     return rows.sort(sorters[browseMode]);
   },[current,typeFilter,searchText,portfolio,browseMode]);
 
-  const visibleOptions=expanded || searchText || typeFilter!=="All" || browseMode!=="Best fit" ? options : options.slice(0,12);
+  const visibleOptions=expanded || searchText || typeFilter!=="All" || browseMode!=="Research relevance" ? options : options.slice(0,12);
 
   if(loading)return <section className="panel">Loading portfolio builder…</section>;
   if(!portfolio)return <section className="panel">Portfolio not found.</section>;
@@ -133,7 +133,7 @@ export default function PortfolioBuilder(){
   }
 
   function goStep(next:number){
-    setSearchText(""); setTypeFilter("All"); setBrowseMode("Best fit"); setExpanded(false); setShowCompletion(false);
+    setSearchText(""); setTypeFilter("All"); setBrowseMode("Research relevance"); setExpanded(false); setShowCompletion(false);
     router.push(`/portfolios/${params.id}/build?step=${next}`);
   }
 
@@ -219,8 +219,8 @@ export default function PortfolioBuilder(){
           </label>
           <label className="field">Not sure what to search? Show me
             <select value={browseMode} onChange={e=>setBrowseMode(e.target.value as any)}>
-              <option>Best fit</option>
-              <option>Good for beginners</option>
+              <option>Research relevance</option>
+              <option>Lower complexity</option>
               <option>More diversified</option>
               <option>Lower volatility</option>
               <option>Higher quality</option>
@@ -245,12 +245,12 @@ export default function PortfolioBuilder(){
                 <p className="muted">{s.type} • {s.category}</p>
                 <p><strong>What it is:</strong> {s.type==="ETF"?"A fund that can hold many underlying investments, which can make diversification easier to understand and practice.":"An individual company stock, so its results depend more heavily on one business."}</p>
                 <p><strong>Why am I seeing this?</strong> Its quality, growth, stability, risk characteristics, and category role rank relatively well within this educational research list.</p>
-                {s.type==="ETF"&&<span className="statusBadge statusGood">Beginner starting point</span>}
-                <p className="helpText">Category Fit is a research-ranking tool, not an expected-return forecast or investment recommendation.</p>
+                {s.type==="ETF"&&<span className="statusBadge statusGood">Diversified fund example</span>}
+                <p className="helpText">Research Relevance is a research-ranking tool, not an expected-return forecast or investment recommendation.</p>
               </div>
               <div style={{textAlign:"right"}}>
                 <div className="kpi">{Number(s.match).toFixed(0)}</div>
-                <div className="muted" style={{fontSize:12}}>Category Fit / 100</div>
+                <div className="muted" style={{fontSize:12}}>Research Relevance / 100</div>
               </div>
             </div>
 
@@ -297,7 +297,7 @@ export default function PortfolioBuilder(){
         {!visibleOptions.length && <section className="panel"><p>No investments match the current search/filter.</p></section>}
       </section>
 
-      {options.length>12 && !searchText && typeFilter==="All" && browseMode==="Best fit" &&
+      {options.length>12 && !searchText && typeFilter==="All" && browseMode==="Research relevance" &&
         <div className="actions" style={{justifyContent:"center",marginTop:14}}>
           <button className="btn btnSecondary" onClick={()=>setExpanded(v=>!v)}>{expanded?"Show top options only":`Browse all ${options.length} options`}</button>
         </div>
@@ -310,7 +310,7 @@ export default function PortfolioBuilder(){
           : `$${totalSelected.toLocaleString(undefined,{maximumFractionDigits:0})} of $${plannedInvestment.toLocaleString(undefined,{maximumFractionDigits:0})}`}</p>
         {categorySelected>categoryTargetDollars*1.1 && <p className="statusBadge statusImportant">This category is more than 10% above its model allocation.</p>}
         {Object.values(selections).filter(s=>s.category===current.name).length < holdingGuide.min && <p className="statusBadge statusInfo">
-          You currently have {Object.values(selections).filter(s=>s.category===current.name).length} holding(s) here. PortfolioPath suggests about {holdingGuide.min}{holdingGuide.max!==holdingGuide.min?`–${holdingGuide.max}`:""} for this category.
+          You currently have {Object.values(selections).filter(s=>s.category===current.name).length} holding(s) here. This learning structure uses about {holdingGuide.min}{holdingGuide.max!==holdingGuide.min?`–${holdingGuide.max}`:""} for this category.
         </p>}
         <div className="actions">
           {idx>0 && <button className="btn btnSecondary" onClick={()=>goStep(idx-1)}>Previous Category</button>}

@@ -1,8 +1,8 @@
-const API=process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000";
+import { backendFetch } from "@/lib/backend";
 
 async function getHealth(){
   try{
-    const r=await fetch(`${API}/health`,{cache:"no-store"});
+    const r=await backendFetch(`/health`,{cache:"no-store"});
     if(!r.ok)return null;
     return await r.json();
   }catch{return null;}
