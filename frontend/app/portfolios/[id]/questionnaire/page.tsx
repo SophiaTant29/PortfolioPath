@@ -79,7 +79,7 @@ export default function QuestionnairePage(){
         <h1>Build your educational model portfolio</h1>
         <p>These questions help PortfolioPath create an educational model based on risk comfort, time horizon, and financial flexibility.</p>
         <p className="helpText">All 15 questions are required. You can edit your answers later.</p>
-        <div className="actions"><a className="btn btnSecondary" href="/learn" target="_blank" rel="noreferrer">New to these terms? Open Learn Center</a></div>
+        <div className="actions"><a className="btn btnSecondary" href={`/learn/basics?next=${encodeURIComponent(`/portfolios/${params.id}/questionnaire`)}`}>New to investing? Take the 3-minute intro</a><a className="btn btnSecondary" href="/learn" target="_blank" rel="noreferrer">Open Learning Center</a></div>
       </section>
 
       <Field n={1} title="How much are you planning to invest?">

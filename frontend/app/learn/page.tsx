@@ -23,7 +23,7 @@ export default function LearnPage(){
       <p className="sectionEyebrow">Learning Center</p>
       <h1>Learn before you build</h1>
       <p>If a term in the questionnaire or builder is unfamiliar, start here. PortfolioPath is designed so you can refer back to this page at any point.</p>
-      <div className="actions"><Link className="btn btnPrimary" href="/learn/glossary">Open Beginner Glossary</Link><Link className="btn btnSecondary" href="/dashboard">Go to My Portfolios</Link></div>
+      <div className="actions"><Link className="btn btnPrimary" href="/learn/basics">Learn the Basics — 3 min</Link><Link className="btn btnSecondary" href="/learn/glossary">Open Beginner Glossary</Link><Link className="btn btnSecondary" href="/dashboard">Go to My Portfolios</Link></div>
     </section>
     <section className="grid" style={{marginTop:16}}>
       {topics.map(([title,text])=><div className="card" key={title}><h2>{title}</h2><p className="muted">{text}</p></div>)}

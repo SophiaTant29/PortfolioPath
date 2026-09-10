@@ -19,7 +19,7 @@ export default function NewPortfolioPage(){
     }).select("id").single();
 
     if(error){setMessage(error.message);return;}
-    window.location.href=`/portfolios/${data.id}/questionnaire`;
+    window.location.href=`/learn/basics?next=${encodeURIComponent(`/portfolios/${data.id}/questionnaire`)}`;
   }
 
   return (

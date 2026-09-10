@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
-const API=process.env.API_BASE_URL || "http://127.0.0.1:8000";
+const API=process.env.API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
 const SECRET=process.env.BACKEND_SHARED_SECRET;
 
 async function forward(request:NextRequest, context:{params:Promise<{path:string[]}>}){
@@ -14,11 +14,10 @@ async function forward(request:NextRequest, context:{params:Promise<{path:string
     const {data:{user}}=await supabase.auth.getUser();
     if(!user) return NextResponse.json({error:"Not authenticated."},{status:401});
   }
-  if(!SECRET) return NextResponse.json({error:"Backend proxy is not configured."},{status:503});
   const url=new URL(`${API.replace(/\/$/,"")}/${joined}`);
   request.nextUrl.searchParams.forEach((value,key)=>url.searchParams.append(key,value));
   const headers=new Headers();
-  headers.set("x-portfoliopath-backend-key",SECRET);
+  if(SECRET) headers.set("x-portfoliopath-backend-key",SECRET);
   const contentType=request.headers.get("content-type");
   if(contentType)headers.set("content-type",contentType);
   const body=["GET","HEAD"].includes(request.method)?undefined:await request.arrayBuffer();
