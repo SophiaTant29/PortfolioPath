@@ -19,19 +19,21 @@ const topics=[
 
 export default function LearnPage(){
   return <>
-    <section className="panel">
-      <p className="sectionEyebrow">Learning Center</p>
-      <h1>Learn before you build</h1>
-      <p>If a term in the questionnaire or builder is unfamiliar, start here. PortfolioPath is designed so you can refer back to this page at any point.</p>
-      <div className="actions"><Link className="btn btnPrimary" href="/learn/basics">Learn the Basics — 3 min</Link><Link className="btn btnSecondary" href="/learn/glossary">Open Beginner Glossary</Link><Link className="btn btnSecondary" href="/dashboard">Go to My Portfolios</Link></div>
+    <div className="pageHeader" style={{marginBottom:24}}>
+      <div><p className="sectionEyebrow">Learning Center</p><h1>Investing fundamentals.</h1><p className="muted">A concise curriculum for understanding portfolio construction and investment research.</p></div>
+      <div className="actions"><Link className="btn btnPrimary" href="/learn/basics">Resume Basics</Link><Link className="btn btnSecondary" href="/learn/glossary">Beginner Glossary</Link></div>
+    </div>
+    <p className="educationalNotice">PortfolioPath teaches concepts and research skills through simplified examples. It does not provide individualized investment recommendations.</p>
+    <section className="editorialGrid" style={{marginTop:24}}>
+      <div className="editorialCard large"><div className="editorialMeta">Start here</div><h2>Learn the Basics</h2><p className="muted">Stocks, ETFs, portfolios, risk, diversification, investment goals, and research — all in one short guided lesson.</p><div className="actions"><Link className="btn btnPrimary" href="/learn/basics">Open guided lesson</Link></div></div>
+      <div style={{display:"grid",gap:16}}>
+        <div className="editorialCard"><div className="editorialMeta">Core concept</div><h2>Diversification</h2><p className="muted">Learn why owning more investments does not always mean more diversification.</p></div>
+        <div className="editorialCard"><div className="editorialMeta">Research skill</div><h2>How to compare funds</h2><p className="muted">Compare holdings, fees, methodology, concentration, and overlap.</p></div>
+      </div>
     </section>
-    <section className="grid" style={{marginTop:16}}>
-      {topics.map(([title,text])=><div className="card" key={title}><h2>{title}</h2><p className="muted">{text}</p></div>)}
-    </section>
-    <section className="panel" style={{marginTop:16}}>
-      <h2>Quick rule for new investors</h2>
-      <p>More holdings do not automatically mean better diversification. One broad ETF may already hold many companies, while several ETFs can still overlap heavily.</p>
-      <p className="educationalNotice">PortfolioPath teaches investing concepts through hypothetical model portfolios. It does not recommend that you buy, sell, or hold any security.</p>
+    <section style={{marginTop:32}}>
+      <div className="pageHeader"><div><p className="sectionEyebrow">Reference library</p><h2>Explore concepts</h2></div></div>
+      <div className="grid">{topics.map(([title,text])=><div className="card" key={title}><h2>{title}</h2><p className="muted">{text}</p></div>)}</div>
     </section>
   </>;
 }

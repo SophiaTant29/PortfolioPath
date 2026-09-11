@@ -10,26 +10,39 @@ export default function RootLayout({children}:{children:React.ReactNode}) {
     <html lang="en">
       <body>
         <a className="skipLink" href="#main-content">Skip to main content</a>
-        <main id="main-content">
-          <header className="navShell" role="banner">
-            <a className="brand" href="/" aria-label="PortfolioPath home">PortfolioPath</a>
-            <nav className="navLinks" aria-label="Primary navigation">
-              <a className="btn btnSecondary" href="/">Home</a>
-              <a className="btn btnSecondary" href="/dashboard">My Portfolios</a>
-              <a className="btn btnSecondary" href="/learn">Learn</a>
-              <a className="btn btnSecondary" href="/profile">Profile</a>
+        <div className="appShell">
+          <aside className="appRail" aria-label="Primary navigation">
+            <a className="railMark" href="/" aria-label="PortfolioPath home">P</a>
+            <nav className="railNav">
+              <a className="railLink" href="/dashboard" title="My Portfolios"><span>⌂</span><span className="railLabel">Portfolios</span></a>
+              <a className="railLink" href="/learn" title="Learn"><span>◫</span><span className="railLabel">Learn</span></a>
+              <a className="railLink" href="/profile" title="Profile"><span>○</span><span className="railLabel">Profile</span></a>
             </nav>
-          </header>
-          {children}
-          <footer style={{marginTop:40,paddingTop:20,borderTop:"1px solid var(--line)"}}>
-            <p className="educationalNotice"><strong>For learning only.</strong> PortfolioPath is an investing education and simulation tool. Its model allocations, rankings, alerts, and research information are educational and are not personalized investment advice or instructions to trade.</p>
-            <div className="navLinks" aria-label="Footer navigation">
-              <a href="/disclosures">Disclosures</a>
-              <a href="/privacy">Privacy</a>
-              <a href="/terms">Terms</a>
+            <div className="railBottom">
+              <a className="railLink" href="/disclosures" title="Disclosures"><span>?</span><span className="railLabel">Disclosures</span></a>
             </div>
-          </footer>
-        </main>
+          </aside>
+          <div className="appWorkspace">
+            <header className="appTopbar" role="banner">
+              <div className="topBrand"><a href="/">PortfolioPath</a><span>/ Learning Workspace</span></div>
+              <nav className="topActions" aria-label="Utility navigation">
+                <a href="/learn">Research & Learn</a>
+                <a className="profileChip" href="/profile">Profile</a>
+              </nav>
+            </header>
+            <main id="main-content" className="appMain">
+              {children}
+              <footer className="siteFooter">
+                <p className="educationalNotice"><strong>For learning only.</strong> PortfolioPath is an investing education and simulation tool. Its model allocations, research examples, observations, and educational information are not personalized investment advice or instructions to trade.</p>
+                <div className="footerLinks" aria-label="Footer navigation">
+                  <a href="/disclosures">Disclosures</a>
+                  <a href="/privacy">Privacy</a>
+                  <a href="/terms">Terms</a>
+                </div>
+              </footer>
+            </main>
+          </div>
+        </div>
       </body>
     </html>
   );
