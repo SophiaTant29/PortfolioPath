@@ -1,0 +1,3 @@
+PortfolioPath risk definition
+
+Risk is the uncertainty around an investment's future value. An investment can go up or down in value, and investments with greater potential returns often experience larger price movements.
