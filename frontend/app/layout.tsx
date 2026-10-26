@@ -14,9 +14,9 @@ export default function RootLayout({children}:{children:React.ReactNode}) {
           <aside className="appRail" aria-label="Primary navigation">
             <a className="railMark" href="/" aria-label="PortfolioPath home">P</a>
             <nav className="railNav">
-              <a className="railLink" href="/dashboard" title="My Portfolios"><span>⌂</span><span className="railLabel">Portfolios</span></a>
+              <a className="railLink" href="/demo" title="Practice Portfolio"><span>⌂</span><span className="railLabel">Portfolios</span></a>
               <a className="railLink" href="/learn" title="Learn"><span>◫</span><span className="railLabel">Learn</span></a>
-              <a className="railLink" href="/profile" title="Profile"><span>○</span><span className="railLabel">Profile</span></a>
+              <a className="railLink" href="/demo" title="My Learning Workspace"><span>○</span><span className="railLabel">Profile</span></a>
             </nav>
             <div className="railBottom">
               <a className="railLink" href="/disclosures" title="Disclosures"><span>?</span><span className="railLabel">Disclosures</span></a>
@@ -27,7 +27,7 @@ export default function RootLayout({children}:{children:React.ReactNode}) {
               <div className="topBrand"><a href="/">PortfolioPath</a><span>/ Learning Workspace</span></div>
               <nav className="topActions" aria-label="Utility navigation">
                 <a href="/learn">Research & Learn</a>
-                <a className="profileChip" href="/profile">Profile</a>
+                <a className="profileChip" href="/demo">Practice Portfolio</a>
               </nav>
             </header>
             <main id="main-content" className="appMain">
