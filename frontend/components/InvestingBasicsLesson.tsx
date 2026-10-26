@@ -101,8 +101,8 @@ export default function InvestingBasicsLesson(){
 
   const hasQuestionnaireNext=Boolean(searchParams.get("next")?.includes("/questionnaire"));
   const nextPath=useMemo(()=>{
-    const raw=searchParams.get("next") || "/dashboard";
-    return raw.startsWith("/") && !raw.startsWith("//") ? raw : "/dashboard";
+    const raw=searchParams.get("next") || "/demo";
+    return raw.startsWith("/") && !raw.startsWith("//") && !raw.startsWith("/\\") ? raw : "/demo";
   },[searchParams]);
 
   useEffect(()=>{
@@ -111,7 +111,7 @@ export default function InvestingBasicsLesson(){
 
   function finish(){
     try{localStorage.setItem("portfoliopath-basics-completed","1");}catch{}
-    router.push(nextPath);
+    router.push(`/learn/basics/quiz?next=${encodeURIComponent(nextPath)}`);
   }
 
   function skip(){
@@ -190,7 +190,7 @@ export default function InvestingBasicsLesson(){
     <div className="lessonNav">
       <button type="button" className="btn btnSecondary" onClick={()=>setIndex(i=>Math.max(0,i-1))} disabled={index===0}>← Back</button>
       <div className="lessonDots" aria-label="Lesson slides">{slides.map((_,i)=><button key={i} type="button" aria-label={`Go to slide ${i+1}`} aria-current={i===index?"step":undefined} className={i===index?"active":""} onClick={()=>setIndex(i)} />)}</div>
-      {index===slides.length-1?<button type="button" className="btn btnPrimary" onClick={finish}>{hasQuestionnaireNext?"Start Questionnaire →":"Finish Lesson →"}</button>:<button type="button" className="btn btnPrimary" onClick={()=>setIndex(i=>Math.min(slides.length-1,i+1))}>Next →</button>}
+      {index===slides.length-1?<button type="button" className="btn btnPrimary" onClick={finish}>{"Take Knowledge Check →"}</button>:<button type="button" className="btn btnPrimary" onClick={()=>setIndex(i=>Math.min(slides.length-1,i+1))}>Next →</button>}
     </div>
     {index<slides.length-1&&<button type="button" className="lessonSkip" onClick={skip}>Skip for now</button>}
   </div>;
