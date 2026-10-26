@@ -30,6 +30,8 @@ export default function CandidateResearch({
   const triggerRef=useRef<HTMLButtonElement>(null);
   const modalRef=useRef<HTMLDivElement>(null);
   const closeRef=useRef<HTMLButtonElement>(null);
+  const onToggleRef=useRef(onToggle);
+  onToggleRef.current=onToggle;
   const {ticker,name,type,category}=investment;
   const links=getResearchLinks(ticker,name,type);
   const guidance=guidanceFor(category);
@@ -44,7 +46,7 @@ export default function CandidateResearch({
     function onKeyDown(event:KeyboardEvent){
       if(event.key==="Escape"){
         event.preventDefault();
-        onToggle();
+        onToggleRef.current();
       }
       if(event.key==="Tab" && modalRef.current){
         const items=Array.from(modalRef.current.querySelectorAll<HTMLElement>(
@@ -65,7 +67,7 @@ export default function CandidateResearch({
       document.removeEventListener("keydown",onKeyDown);
       triggerRef.current?.focus();
     };
-  },[open,onToggle]);
+  },[open]);
 
   return <>
     <button
