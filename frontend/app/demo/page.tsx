@@ -138,13 +138,12 @@ export default function PublicDemo(){
           {candidates.map(s=>{
             const selected=state.selections.find(x=>x.ticker===s.ticker);
             return <div className="card" key={s.ticker}>
-              <strong>{s.ticker} — {s.name}</strong>
-              <p className="muted">{s.type} · Quality score {s.quality}/100 · Risk indicator {s.risk}/100</p>
               <CandidateResearch
                 investment={{ticker:s.ticker,name:s.name,type:s.type as "Stock"|"ETF",category:s.category}}
                 open={openResearch===s.ticker}
                 onToggle={()=>setOpenResearch(previous=>previous===s.ticker?null:s.ticker)}
               />
+              <p className="muted">{s.type} · Quality score {s.quality}/100 · Risk indicator {s.risk}/100</p>
               <button className={selected?"btn btnSecondary":"btn btnPrimary"} type="button" onClick={()=>toggle(s.ticker,s.name)}>{selected?"Remove example":"Add to practice portfolio"}</button>
               {selected&&<label className="field">Planned amount ($)<input type="number" min="0" step="0.01" value={selected.amount} onChange={e=>changeAmount(s.ticker,Number(e.target.value))}/></label>}
             </div>;
