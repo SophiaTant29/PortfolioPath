@@ -6,6 +6,7 @@ import { calculateInvestorProfile, type QuestionnaireAnswers } from "@/lib/inves
 import { simplifyAllocationForAmount, portfolioComplexityPlan } from "@/lib/portfolioComplexity";
 import { securityUniverse } from "@/lib/securityUniverse";
 import CandidateResearch from "@/components/CandidateResearch";
+import PortfolioAnalysisDashboard from "@/components/PortfolioAnalysisDashboard";
 
 const KEY="portfoliopath-public-demo-v1";
 const initial:QuestionnaireAnswers={
@@ -157,15 +158,19 @@ export default function PublicDemo(){
         </div>
       </section>
     </>}
-    {state.step==="review"&&<section className="panel">
-      <div className="grid">
-        <div className="card"><small>Practice portfolio</small><div className="kpi">{money(total)}</div></div>
-        <div className="card"><small>Illustrative budget</small><div className="kpi">{money(state.answers.amount)}</div></div>
-        <div className="card"><small>Example holdings</small><div className="kpi">{state.selections.length}</div></div>
-      </div>
-      <h2>Selected investments</h2>
-      {state.selections.length===0?<p>No examples selected yet.</p>:state.selections.map(s=><div key={s.ticker} className="card" style={{marginBottom:10}}><strong>{s.ticker} — {s.name}</strong><p>{s.category} · {money(s.amount)}</p></div>)}
-      <div className="actions"><button className="btn btnPrimary" onClick={()=>move("build",0)}>Edit Practice Portfolio</button><button className="btn btnSecondary" onClick={()=>{if(window.confirm("Clear your local demo progress?")){localStorage.removeItem(KEY);setState({answers:initial,selections:[],step:"questions",categoryIndex:0});}}}>Start Over</button></div>
-    </section>}
+    {state.step==="review"&&<PortfolioAnalysisDashboard
+      selections={state.selections}
+      allocation={allocation}
+      budget={state.answers.amount}
+      profileName={profile.profileName}
+      onEdit={()=>move("build",0)}
+      onReset={()=>{
+        if(window.confirm("Clear your local practice portfolio and start again?")){
+          try{localStorage.removeItem(KEY);localStorage.removeItem("portfoliopath-review-reflection-v1");}catch{}
+          setState({answers:initial,selections:[],step:"questions",categoryIndex:0});
+          window.scrollTo(0,0);
+        }
+      }}
+    />}
   </div>;
 }
