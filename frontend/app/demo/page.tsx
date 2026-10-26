@@ -5,6 +5,7 @@ import Link from "next/link";
 import { calculateInvestorProfile, type QuestionnaireAnswers } from "@/lib/investorProfile";
 import { simplifyAllocationForAmount, portfolioComplexityPlan } from "@/lib/portfolioComplexity";
 import { securityUniverse } from "@/lib/securityUniverse";
+import CandidateResearch from "@/components/CandidateResearch";
 
 const KEY="portfoliopath-public-demo-v1";
 const initial:QuestionnaireAnswers={
@@ -36,6 +37,7 @@ export default function PublicDemo(){
   const [ready,setReady]=useState(false);
   const [search,setSearch]=useState("");
   const [message,setMessage]=useState("");
+  const [openResearch,setOpenResearch]=useState<string|null>(null);
   useEffect(()=>{
     try{
       const saved=localStorage.getItem(KEY);
@@ -59,7 +61,7 @@ export default function PublicDemo(){
     window.scrollTo(0,0);
   }
   function move(step:DemoState["step"],categoryIndex=index){
-    setMessage("");setSearch("");setState(s=>({...s,step,categoryIndex}));
+    setMessage("");setSearch("");setOpenResearch(null);setState(s=>({...s,step,categoryIndex}));
     window.scrollTo(0,0);
   }
   function toggle(ticker:string,name:string){
@@ -138,6 +140,11 @@ export default function PublicDemo(){
             return <div className="card" key={s.ticker}>
               <strong>{s.ticker} — {s.name}</strong>
               <p className="muted">{s.type} · Quality score {s.quality}/100 · Risk indicator {s.risk}/100</p>
+              <CandidateResearch
+                investment={{ticker:s.ticker,name:s.name,type:s.type as "Stock"|"ETF",category:s.category}}
+                open={openResearch===s.ticker}
+                onToggle={()=>setOpenResearch(previous=>previous===s.ticker?null:s.ticker)}
+              />
               <button className={selected?"btn btnSecondary":"btn btnPrimary"} type="button" onClick={()=>toggle(s.ticker,s.name)}>{selected?"Remove example":"Add to practice portfolio"}</button>
               {selected&&<label className="field">Planned amount ($)<input type="number" min="0" step="0.01" value={selected.amount} onChange={e=>changeAmount(s.ticker,Number(e.target.value))}/></label>}
             </div>;
